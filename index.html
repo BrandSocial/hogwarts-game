@@ -4,1771 +4,1003 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hogwarts Magical Adventure</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<meta name="description" content="A magical browser adventure with 7 mini-games — Catch the Snitch, Potion Brewing, Spell Duels, Memory Magic, Wizard Trivia, Broomstick Run & Spell Scramble!">
+<meta property="og:title" content="Hogwarts Magical Adventure">
+<meta property="og:description" content="Get sorted into your Hogwarts house and play 7 magical mini-games! Free browser game.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hogwarts-game.vercel.app">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hogwarts Magical Adventure">
+<meta name="twitter:description" content="Get sorted into your Hogwarts house and play 7 magical mini-games!">
+<meta name="theme-color" content="#0a0a1a">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;700&family=Lora:wght@400;700&display=swap');
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: 'Lora', serif;
-  background: #0a0a1a;
-  color: #e8d5b7;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* STARS BACKGROUND */
-.stars {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 0;
-}
-.star {
-  position: absolute; background: #fff; border-radius: 50%;
-  animation: twinkle var(--dur) ease-in-out infinite;
-}
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1.2); }
-}
-
-/* FLOATING PARTICLES */
-.particles {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 1;
-}
-.particle {
-  position: absolute; width: 4px; height: 4px; border-radius: 50%;
-  background: gold; opacity: 0;
-  animation: floatUp 6s ease-in-out infinite;
-}
-@keyframes floatUp {
-  0% { opacity: 0; transform: translateY(100vh) scale(0); }
-  20% { opacity: 0.8; }
-  80% { opacity: 0.3; }
-  100% { opacity: 0; transform: translateY(-20px) scale(1.5); }
-}
-
-/* MAIN CONTAINER */
-.game-container {
-  position: relative; z-index: 10;
-  max-width: 800px; margin: 0 auto; padding: 20px;
-  min-height: 100vh; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-}
-
-/* SCREENS */
-.screen { display: none; width: 100%; text-align: center; animation: fadeIn 0.8s ease; }
-.screen.active { display: flex; flex-direction: column; align-items: center; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-/* TITLE */
-h1.game-title {
-  font-family: 'Cinzel Decorative', cursive;
-  font-size: clamp(2rem, 6vw, 3.5rem);
-  color: #ffd700;
-  text-shadow: 0 0 20px rgba(255,215,0,0.5), 0 0 40px rgba(255,215,0,0.3);
-  margin-bottom: 10px;
-  letter-spacing: 2px;
-}
-h2 {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(1.3rem, 4vw, 2rem);
-  color: #ffd700;
-  text-shadow: 0 0 10px rgba(255,215,0,0.3);
-  margin-bottom: 15px;
-}
-h3 {
-  font-family: 'Cinzel', serif;
-  font-size: 1.3rem;
-  color: #c0a060;
-  margin-bottom: 10px;
-}
-
-/* SUBTITLE */
-.subtitle {
-  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-  color: #b8a070;
-  margin-bottom: 30px;
-  font-style: italic;
-}
-
-/* HOGWARTS CREST */
-.crest {
-  font-size: 80px; margin-bottom: 20px;
-  animation: float 3s ease-in-out infinite;
-  filter: drop-shadow(0 0 20px rgba(255,215,0,0.4));
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* INPUT */
-.magic-input {
-  background: rgba(255,215,0,0.08);
-  border: 2px solid rgba(255,215,0,0.3);
-  border-radius: 12px; padding: 15px 25px;
-  font-size: 1.2rem; color: #ffd700;
-  font-family: 'Cinzel', serif;
-  text-align: center; width: 100%; max-width: 400px;
-  outline: none; transition: all 0.3s;
-}
-.magic-input:focus {
-  border-color: #ffd700;
-  box-shadow: 0 0 20px rgba(255,215,0,0.2);
-  background: rgba(255,215,0,0.12);
-}
-.magic-input::placeholder { color: rgba(255,215,0,0.3); }
-
-/* BUTTONS */
-.btn {
-  background: linear-gradient(135deg, #8B0000 0%, #b22222 50%, #8B0000 100%);
-  border: 2px solid #ffd700; border-radius: 12px;
-  padding: 14px 35px; font-size: 1.1rem;
-  color: #ffd700; font-family: 'Cinzel', serif; font-weight: 700;
-  cursor: pointer; transition: all 0.3s;
-  text-transform: uppercase; letter-spacing: 2px;
-  position: relative; overflow: hidden;
-  margin: 8px;
-}
-.btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(139,0,0,0.5), 0 0 15px rgba(255,215,0,0.3);
-}
-.btn:active { transform: translateY(0); }
-.btn.small { padding: 10px 20px; font-size: 0.9rem; }
-.btn.gold {
-  background: linear-gradient(135deg, #b8860b 0%, #ffd700 50%, #b8860b 100%);
-  color: #1a0a00;
-}
-.btn:disabled {
-  opacity: 0.5; cursor: not-allowed; transform: none !important;
-}
-
-/* RIDDLE CARD */
-.riddle-card {
-  background: linear-gradient(135deg, rgba(20,10,40,0.9), rgba(40,20,60,0.9));
-  border: 2px solid rgba(255,215,0,0.3);
-  border-radius: 20px; padding: 30px;
-  max-width: 600px; width: 100%;
-  margin: 20px 0;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
-.riddle-question {
-  font-size: 1.15rem; line-height: 1.6;
-  margin-bottom: 25px; color: #e8d5b7;
-}
-.riddle-options {
-  display: flex; flex-direction: column; gap: 10px;
-}
-.riddle-option {
-  background: rgba(255,215,0,0.05);
-  border: 2px solid rgba(255,215,0,0.15);
-  border-radius: 12px; padding: 14px 20px;
-  cursor: pointer; transition: all 0.3s;
-  text-align: left; font-size: 1rem;
-  color: #d4c5a0; font-family: 'Lora', serif;
-}
-.riddle-option:hover {
-  border-color: #ffd700;
-  background: rgba(255,215,0,0.12);
-  transform: translateX(8px);
-  color: #ffd700;
-}
-.riddle-option.selected {
-  border-color: #ffd700;
-  background: rgba(255,215,0,0.15);
-  color: #ffd700;
-  box-shadow: 0 0 15px rgba(255,215,0,0.15);
-}
-
-/* PROGRESS BAR */
-.progress-bar {
-  width: 100%; max-width: 400px; height: 8px;
-  background: rgba(255,215,0,0.1); border-radius: 4px;
-  margin: 15px 0; overflow: hidden;
-}
-.progress-fill {
-  height: 100%; background: linear-gradient(90deg, #ffd700, #ff8c00);
-  border-radius: 4px; transition: width 0.5s ease;
-}
-
-/* HOUSE COLORS */
-.gryffindor { --house-color: #ae0001; --house-accent: #ffd700; }
-.hufflepuff { --house-color: #ecb939; --house-accent: #372e29; }
-.ravenclaw { --house-color: #222f5b; --house-accent: #946b2d; }
-.slytherin { --house-color: #1a472a; --house-accent: #aaa; }
-
-.house-reveal {
-  animation: houseReveal 1.5s ease;
-}
-@keyframes houseReveal {
-  0% { transform: scale(0.3); opacity: 0; }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
-}
-.house-banner {
-  font-size: 100px; margin: 15px 0;
-  animation: float 3s ease-in-out infinite;
-}
-.house-name {
-  font-family: 'Cinzel Decorative', cursive;
-  font-size: clamp(2rem, 5vw, 3rem);
-  text-shadow: 0 0 30px var(--house-color);
-  margin-bottom: 15px;
-}
-.house-desc {
-  font-size: 1.05rem; line-height: 1.6;
-  max-width: 500px; margin: 0 auto 20px;
-  color: #c0b090;
-}
-
-/* HUB */
-.hub-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px; width: 100%; max-width: 650px; margin: 20px 0;
-}
-.hub-card {
-  background: linear-gradient(135deg, rgba(20,10,40,0.8), rgba(40,20,60,0.8));
-  border: 2px solid rgba(255,215,0,0.2);
-  border-radius: 16px; padding: 25px 15px;
-  cursor: pointer; transition: all 0.3s;
-  text-align: center;
-}
-.hub-card:hover {
-  border-color: #ffd700;
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(255,215,0,0.15);
-}
-.hub-card .icon { font-size: 50px; margin-bottom: 10px; }
-.hub-card .name { font-family: 'Cinzel', serif; font-size: 1rem; color: #ffd700; margin-bottom: 5px; }
-.hub-card .desc { font-size: 0.8rem; color: #a09070; }
-
-/* SCORE DISPLAY */
-.score-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  width: 100%; max-width: 600px;
-  background: rgba(0,0,0,0.4); border-radius: 12px;
-  padding: 10px 20px; margin-bottom: 20px;
-  border: 1px solid rgba(255,215,0,0.15);
-  font-family: 'Cinzel', serif; font-size: 0.9rem;
-}
-.score-bar .points { color: #ffd700; font-weight: 700; }
-.score-bar .house-badge { font-size: 1.3rem; }
-
-/* GAME AREAS */
-.game-area {
-  width: 100%; max-width: 600px;
-  background: rgba(10,5,25,0.7);
-  border: 2px solid rgba(255,215,0,0.2);
-  border-radius: 20px; padding: 25px;
-  margin: 15px 0; position: relative;
-  min-height: 300px;
-}
-
-/* SNITCH GAME */
-.snitch-field {
-  width: 100%; height: 350px; position: relative;
-  background: linear-gradient(180deg, #0a1628 0%, #1a2a4a 50%, #0a1628 100%);
-  border-radius: 12px; overflow: hidden; cursor: crosshair;
-  border: 1px solid rgba(255,215,0,0.15);
-}
-.snitch {
-  position: absolute; font-size: 35px; cursor: pointer;
-  transition: none; user-select: none;
-  filter: drop-shadow(0 0 10px rgba(255,215,0,0.8));
-  animation: snitchGlow 0.5s ease-in-out infinite alternate;
-}
-@keyframes snitchGlow {
-  from { filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); }
-  to { filter: drop-shadow(0 0 20px rgba(255,215,0,1)); }
-}
-.snitch-timer {
-  font-size: 2.5rem; font-family: 'Cinzel Decorative', cursive;
-  color: #ffd700; margin: 10px 0;
-}
-.snitch-score {
-  font-size: 1.2rem; color: #c0a060;
-}
-.decoy {
-  position: absolute; font-size: 25px; cursor: pointer;
-  user-select: none; opacity: 0.7;
-}
-
-/* POTION GAME */
-.cauldron-area {
-  display: flex; flex-direction: column; align-items: center; gap: 15px;
-}
-.cauldron { font-size: 80px; animation: bubble 1s ease-in-out infinite; }
-@keyframes bubble {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-.ingredient-shelf {
-  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
-  margin: 10px 0;
-}
-.ingredient {
-  font-size: 35px; cursor: grab; padding: 8px;
-  background: rgba(255,215,0,0.05); border: 2px solid rgba(255,215,0,0.15);
-  border-radius: 12px; transition: all 0.3s; user-select: none;
-}
-.ingredient:hover {
-  border-color: #ffd700; transform: scale(1.15);
-  box-shadow: 0 0 15px rgba(255,215,0,0.3);
-}
-.ingredient.used { opacity: 0.3; pointer-events: none; }
-.recipe-card {
-  background: rgba(139,90,43,0.15); border: 1px solid rgba(139,90,43,0.4);
-  border-radius: 12px; padding: 15px; max-width: 400px;
-  font-style: italic; color: #c0a060;
-}
-.potion-progress {
-  display: flex; gap: 8px; margin: 10px 0;
-}
-.potion-step {
-  width: 40px; height: 40px; border-radius: 50%;
-  border: 2px solid rgba(255,215,0,0.2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; transition: all 0.3s;
-}
-.potion-step.done {
-  border-color: #00ff88; background: rgba(0,255,136,0.1);
-}
-.potion-step.wrong {
-  border-color: #ff4444; background: rgba(255,68,68,0.1);
-}
-
-/* SPELL DUEL */
-.duel-area { text-align: center; }
-.opponent {
-  font-size: 70px; margin: 10px 0;
-  animation: float 2s ease-in-out infinite;
-}
-.spell-prompt {
-  font-size: 1.8rem; font-family: 'Cinzel Decorative', cursive;
-  color: #ffd700; margin: 15px 0; min-height: 50px;
-  text-shadow: 0 0 15px rgba(255,215,0,0.5);
-}
-.spell-buttons {
-  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
-}
-.spell-btn {
-  padding: 12px 20px; border-radius: 12px; font-size: 1rem;
-  font-family: 'Cinzel', serif; cursor: pointer;
-  border: 2px solid rgba(255,215,0,0.3);
-  background: rgba(100,50,150,0.3); color: #e8d5b7;
-  transition: all 0.3s; min-width: 140px;
-}
-.spell-btn:hover {
-  border-color: #ffd700; background: rgba(100,50,150,0.5);
-  transform: scale(1.05); color: #ffd700;
-}
-.spell-btn.correct {
-  border-color: #00ff88; background: rgba(0,255,136,0.2);
-  animation: spellFlash 0.5s;
-}
-.spell-btn.wrong {
-  border-color: #ff4444; background: rgba(255,68,68,0.2);
-}
-@keyframes spellFlash {
-  0% { box-shadow: 0 0 0 rgba(0,255,136,0); }
-  50% { box-shadow: 0 0 40px rgba(0,255,136,0.5); }
-  100% { box-shadow: 0 0 0 rgba(0,255,136,0); }
-}
-.health-bar {
-  width: 100%; height: 14px; background: rgba(255,255,255,0.1);
-  border-radius: 7px; overflow: hidden; margin: 5px 0;
-}
-.health-fill {
-  height: 100%; border-radius: 7px; transition: width 0.5s ease;
-}
-.health-fill.player { background: linear-gradient(90deg, #00ff88, #00cc66); }
-.health-fill.enemy { background: linear-gradient(90deg, #ff4444, #cc0000); }
-.hp-label { font-size: 0.8rem; color: #a09070; margin-bottom: 3px; }
-
-/* MEMORY GAME */
-.memory-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 10px; max-width: 400px; margin: 15px auto;
-}
-.memory-card {
-  aspect-ratio: 1; border-radius: 12px;
-  background: linear-gradient(135deg, #1a0a30, #2a1a50);
-  border: 2px solid rgba(255,215,0,0.2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 30px; cursor: pointer;
-  transition: all 0.3s; user-select: none;
-}
-.memory-card:hover { border-color: #ffd700; }
-.memory-card.flipped {
-  background: rgba(255,215,0,0.1);
-  border-color: #ffd700;
-  transform: rotateY(180deg);
-}
-.memory-card.matched {
-  background: rgba(0,255,136,0.1);
-  border-color: #00ff88;
-}
-.memory-card .front { display: none; }
-.memory-card .back { font-size: 25px; }
-.memory-card.flipped .front { display: block; }
-.memory-card.flipped .back, .memory-card.matched .back { display: none; }
-.memory-card.matched .front { display: block; }
-
-/* TRIVIA */
-.trivia-card {
-  background: linear-gradient(135deg, rgba(20,10,40,0.9), rgba(40,20,60,0.9));
-  border: 2px solid rgba(255,215,0,0.3);
-  border-radius: 20px; padding: 30px;
-  max-width: 600px; width: 100%; margin: 10px 0;
-}
-.trivia-q {
-  font-size: 1.15rem; line-height: 1.6;
-  margin-bottom: 20px;
-}
-.trivia-options {
-  display: flex; flex-direction: column; gap: 10px;
-}
-.trivia-opt {
-  padding: 14px 20px; border-radius: 12px;
-  border: 2px solid rgba(255,215,0,0.15);
-  background: rgba(255,215,0,0.05);
-  cursor: pointer; transition: all 0.3s;
-  text-align: left; color: #d4c5a0;
-}
-.trivia-opt:hover {
-  border-color: #ffd700; color: #ffd700;
-  transform: translateX(8px);
-}
-.trivia-opt.correct { border-color: #00ff88; background: rgba(0,255,136,0.15); color: #00ff88; }
-.trivia-opt.wrong { border-color: #ff4444; background: rgba(255,68,68,0.1); color: #ff4444; }
-
-/* LEADERBOARD */
-.leaderboard {
-  width: 100%; max-width: 500px;
-  background: rgba(10,5,25,0.8); border-radius: 16px;
-  border: 2px solid rgba(255,215,0,0.2);
-  overflow: hidden; margin: 15px 0;
-}
-.lb-header {
-  background: rgba(255,215,0,0.08); padding: 12px 20px;
-  display: flex; justify-content: space-between;
-  font-family: 'Cinzel', serif; font-size: 0.85rem;
-  color: #a09070; border-bottom: 1px solid rgba(255,215,0,0.1);
-}
-.lb-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 12px 20px; border-bottom: 1px solid rgba(255,215,0,0.05);
-  transition: background 0.3s;
-}
-.lb-row:hover { background: rgba(255,215,0,0.05); }
-.lb-row.current { background: rgba(255,215,0,0.08); border-left: 3px solid #ffd700; }
-.lb-rank { width: 40px; font-family: 'Cinzel', serif; color: #ffd700; }
-.lb-name { flex: 1; }
-.lb-house { width: 30px; text-align: center; }
-.lb-score { width: 70px; text-align: right; font-weight: 700; color: #ffd700; }
-
-/* TOAST */
-.toast {
-  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-  background: rgba(20,10,40,0.95); border: 2px solid #ffd700;
-  border-radius: 12px; padding: 15px 30px;
-  font-family: 'Cinzel', serif; color: #ffd700;
-  z-index: 1000; animation: toastIn 0.5s ease;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.7);
-}
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(-30px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-/* COMBO */
-.combo-display {
-  font-family: 'Cinzel Decorative', cursive;
-  font-size: 1.5rem; color: #ff8c00;
-  text-shadow: 0 0 15px rgba(255,140,0,0.5);
-  animation: comboPulse 0.5s ease;
-}
-@keyframes comboPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
-}
-
-/* RESPONSIVE */
-@media (max-width: 500px) {
-  .game-container { padding: 10px; }
-  .memory-grid { grid-template-columns: repeat(3, 1fr); }
-  .hub-grid { grid-template-columns: 1fr 1fr; }
-  .spell-buttons { flex-direction: column; }
-  .riddle-card, .trivia-card, .game-area { padding: 20px 15px; }
-}
-
-/* MUSIC TOGGLE */
-.music-toggle {
-  position: fixed; top: 15px; right: 15px;
-  z-index: 100; background: rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,215,0,0.3);
-  border-radius: 50%; width: 45px; height: 45px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 20px; transition: all 0.3s;
-}
-.music-toggle:hover { border-color: #ffd700; background: rgba(255,215,0,0.1); }
-
-/* SOUND TOGGLE */
-.sound-toggle {
-  position: fixed; top: 15px; right: 70px;
-  z-index: 100; background: rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,215,0,0.3);
-  border-radius: 50%; width: 45px; height: 45px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 20px; transition: all 0.3s;
-}
-.sound-toggle:hover { border-color: #ffd700; background: rgba(255,215,0,0.1); }
-
-.wand-trail {
-  position: fixed; width: 6px; height: 6px;
-  background: #ffd700; border-radius: 50%;
-  pointer-events: none; z-index: 50;
-  animation: wandFade 0.8s ease-out forwards;
-}
-@keyframes wandFade {
-  to { opacity: 0; transform: scale(3); }
-}
-
-.level-badge {
-  display: inline-block;
-  background: linear-gradient(135deg, #ffd700, #ff8c00);
-  color: #1a0a00; font-family: 'Cinzel', serif;
-  font-weight: 700; font-size: 0.8rem;
-  padding: 3px 12px; border-radius: 20px;
-  margin-left: 8px;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Lora',serif;background:#0a0a1a;color:#e8d5b7;min-height:100vh;overflow-x:hidden}
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--dur) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.particle{position:absolute;width:4px;height:4px;border-radius:50%;background:gold;opacity:0;animation:floatUp 6s ease-in-out infinite}
+@keyframes floatUp{0%{opacity:0;transform:translateY(100vh) scale(0)}20%{opacity:.8}80%{opacity:.3}100%{opacity:0;transform:translateY(-20px) scale(1.5)}}
+.game-container{position:relative;z-index:10;max-width:800px;margin:0 auto;padding:20px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.screen{display:none;width:100%;text-align:center;animation:fadeIn .8s ease}
+.screen.active{display:flex;flex-direction:column;align-items:center}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1.game-title{font-family:'Cinzel Decorative',cursive;font-size:clamp(2rem,6vw,3.5rem);color:#ffd700;text-shadow:0 0 20px rgba(255,215,0,.5),0 0 40px rgba(255,215,0,.3);margin-bottom:10px;letter-spacing:2px}
+h2{font-family:'Cinzel',serif;font-size:clamp(1.3rem,4vw,2rem);color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,.3);margin-bottom:15px}
+h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
+.subtitle{font-size:clamp(.9rem,2.5vw,1.2rem);color:#b8a070;margin-bottom:30px;font-style:italic}
+.crest{font-size:80px;margin-bottom:20px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,215,0,.4))}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.magic-input{background:rgba(255,215,0,.08);border:2px solid rgba(255,215,0,.3);border-radius:12px;padding:15px 25px;font-size:1.2rem;color:#ffd700;font-family:'Cinzel',serif;text-align:center;width:100%;max-width:400px;outline:none;transition:all .3s}
+.magic-input:focus{border-color:#ffd700;box-shadow:0 0 20px rgba(255,215,0,.2);background:rgba(255,215,0,.12)}
+.magic-input::placeholder{color:rgba(255,215,0,.3)}
+.btn{background:linear-gradient(135deg,#8B0000,#b22222,#8B0000);border:2px solid #ffd700;border-radius:12px;padding:14px 35px;font-size:1.1rem;color:#ffd700;font-family:'Cinzel',serif;font-weight:700;cursor:pointer;transition:all .3s;text-transform:uppercase;letter-spacing:2px;margin:8px}
+.btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(139,0,0,.5),0 0 15px rgba(255,215,0,.3)}
+.btn:active{transform:translateY(0)}
+.btn.small{padding:10px 20px;font-size:.9rem}
+.btn.gold{background:linear-gradient(135deg,#b8860b,#ffd700,#b8860b);color:#1a0a00}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.riddle-card,.trivia-card{background:linear-gradient(135deg,rgba(20,10,40,.9),rgba(40,20,60,.9));border:2px solid rgba(255,215,0,.3);border-radius:20px;padding:30px;max-width:600px;width:100%;margin:20px 0;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.riddle-question,.trivia-q{font-size:1.15rem;line-height:1.6;margin-bottom:25px;color:#e8d5b7}
+.riddle-options,.trivia-options{display:flex;flex-direction:column;gap:10px}
+.riddle-option,.trivia-opt{background:rgba(255,215,0,.05);border:2px solid rgba(255,215,0,.15);border-radius:12px;padding:14px 20px;cursor:pointer;transition:all .3s;text-align:left;font-size:1rem;color:#d4c5a0;font-family:'Lora',serif}
+.riddle-option:hover,.trivia-opt:hover{border-color:#ffd700;background:rgba(255,215,0,.12);transform:translateX(8px);color:#ffd700}
+.riddle-option.selected{border-color:#ffd700;background:rgba(255,215,0,.15);color:#ffd700}
+.trivia-opt.correct{border-color:#00ff88;background:rgba(0,255,136,.15);color:#00ff88}
+.trivia-opt.wrong{border-color:#ff4444;background:rgba(255,68,68,.1);color:#ff4444}
+.progress-bar{width:100%;max-width:400px;height:8px;background:rgba(255,215,0,.1);border-radius:4px;margin:15px 0;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#ffd700,#ff8c00);border-radius:4px;transition:width .5s ease}
+.house-reveal{animation:houseReveal 1.5s ease}
+@keyframes houseReveal{0%{transform:scale(.3);opacity:0}50%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.house-banner{font-size:100px;margin:15px 0;animation:float 3s ease-in-out infinite}
+.house-name{font-family:'Cinzel Decorative',cursive;font-size:clamp(2rem,5vw,3rem);margin-bottom:15px}
+.house-desc{font-size:1.05rem;line-height:1.6;max-width:500px;margin:0 auto 20px;color:#c0b090}
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;width:100%;max-width:650px;margin:20px 0}
+.hub-card{background:linear-gradient(135deg,rgba(20,10,40,.8),rgba(40,20,60,.8));border:2px solid rgba(255,215,0,.2);border-radius:16px;padding:25px 15px;cursor:pointer;transition:all .3s;text-align:center}
+.hub-card:hover{border-color:#ffd700;transform:translateY(-5px);box-shadow:0 10px 30px rgba(255,215,0,.15)}
+.hub-card .icon{font-size:50px;margin-bottom:10px}
+.hub-card .name{font-family:'Cinzel',serif;font-size:1rem;color:#ffd700;margin-bottom:5px}
+.hub-card .desc{font-size:.8rem;color:#a09070}
+.score-bar{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:600px;background:rgba(0,0,0,.4);border-radius:12px;padding:10px 20px;margin-bottom:20px;border:1px solid rgba(255,215,0,.15);font-family:'Cinzel',serif;font-size:.9rem}
+.score-bar .points{color:#ffd700;font-weight:700}
+.game-area{width:100%;max-width:600px;background:rgba(10,5,25,.7);border:2px solid rgba(255,215,0,.2);border-radius:20px;padding:25px;margin:15px 0;position:relative;min-height:300px}
+.snitch-field{width:100%;height:350px;position:relative;background:linear-gradient(180deg,#0a1628,#1a2a4a,#0a1628);border-radius:12px;overflow:hidden;cursor:crosshair;border:1px solid rgba(255,215,0,.15)}
+.snitch{position:absolute;font-size:35px;cursor:pointer;user-select:none;filter:drop-shadow(0 0 10px rgba(255,215,0,.8));animation:snitchGlow .5s ease-in-out infinite alternate}
+@keyframes snitchGlow{from{filter:drop-shadow(0 0 10px rgba(255,215,0,.5))}to{filter:drop-shadow(0 0 20px rgba(255,215,0,1))}}
+.snitch-timer{font-size:2.5rem;font-family:'Cinzel Decorative',cursive;color:#ffd700;margin:10px 0}
+.decoy{position:absolute;font-size:25px;cursor:pointer;user-select:none;opacity:.7}
+.cauldron-area{display:flex;flex-direction:column;align-items:center;gap:15px}
+.cauldron{font-size:80px;animation:bubble 1s ease-in-out infinite}
+@keyframes bubble{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.ingredient-shelf{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
+.ingredient{font-size:35px;cursor:grab;padding:8px;background:rgba(255,215,0,.05);border:2px solid rgba(255,215,0,.15);border-radius:12px;transition:all .3s;user-select:none}
+.ingredient:hover{border-color:#ffd700;transform:scale(1.15);box-shadow:0 0 15px rgba(255,215,0,.3)}
+.ingredient.used{opacity:.3;pointer-events:none}
+.recipe-card{background:rgba(139,90,43,.15);border:1px solid rgba(139,90,43,.4);border-radius:12px;padding:15px;max-width:400px;font-style:italic;color:#c0a060}
+.potion-progress{display:flex;gap:8px;margin:10px 0}
+.potion-step{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,215,0,.2);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .3s}
+.potion-step.done{border-color:#00ff88;background:rgba(0,255,136,.1)}
+.potion-step.wrong{border-color:#ff4444;background:rgba(255,68,68,.1)}
+.duel-area{text-align:center}
+.opponent{font-size:70px;margin:10px 0;animation:float 2s ease-in-out infinite}
+.spell-prompt{font-size:1.8rem;font-family:'Cinzel Decorative',cursive;color:#ffd700;margin:15px 0;min-height:50px;text-shadow:0 0 15px rgba(255,215,0,.5)}
+.spell-buttons{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.spell-btn{padding:12px 20px;border-radius:12px;font-size:1rem;font-family:'Cinzel',serif;cursor:pointer;border:2px solid rgba(255,215,0,.3);background:rgba(100,50,150,.3);color:#e8d5b7;transition:all .3s;min-width:140px}
+.spell-btn:hover{border-color:#ffd700;background:rgba(100,50,150,.5);transform:scale(1.05);color:#ffd700}
+.spell-btn.correct{border-color:#00ff88;background:rgba(0,255,136,.2)}
+.spell-btn.wrong{border-color:#ff4444;background:rgba(255,68,68,.2)}
+.health-bar{width:100%;height:14px;background:rgba(255,255,255,.1);border-radius:7px;overflow:hidden;margin:5px 0}
+.health-fill{height:100%;border-radius:7px;transition:width .5s ease}
+.health-fill.player{background:linear-gradient(90deg,#00ff88,#00cc66)}
+.health-fill.enemy{background:linear-gradient(90deg,#ff4444,#cc0000)}
+.hp-label{font-size:.8rem;color:#a09070;margin-bottom:3px}
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:400px;margin:15px auto}
+.memory-card{aspect-ratio:1;border-radius:12px;background:linear-gradient(135deg,#1a0a30,#2a1a50);border:2px solid rgba(255,215,0,.2);display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;transition:all .3s;user-select:none}
+.memory-card:hover{border-color:#ffd700}
+.memory-card.flipped{background:rgba(255,215,0,.1);border-color:#ffd700;transform:rotateY(180deg)}
+.memory-card.matched{background:rgba(0,255,136,.1);border-color:#00ff88}
+.memory-card .front{display:none}
+.memory-card .back{font-size:25px}
+.memory-card.flipped .front{display:block}
+.memory-card.flipped .back,.memory-card.matched .back{display:none}
+.memory-card.matched .front{display:block}
+.leaderboard{width:100%;max-width:500px;background:rgba(10,5,25,.8);border-radius:16px;border:2px solid rgba(255,215,0,.2);overflow:hidden;margin:15px 0}
+.lb-header{background:rgba(255,215,0,.08);padding:12px 20px;display:flex;justify-content:space-between;font-family:'Cinzel',serif;font-size:.85rem;color:#a09070;border-bottom:1px solid rgba(255,215,0,.1)}
+.lb-row{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(255,215,0,.05);transition:background .3s}
+.lb-row:hover{background:rgba(255,215,0,.05)}
+.lb-row.current{background:rgba(255,215,0,.08);border-left:3px solid #ffd700}
+.lb-rank{width:40px;font-family:'Cinzel',serif;color:#ffd700}
+.lb-name{flex:1}
+.lb-house{width:30px;text-align:center}
+.lb-score{width:70px;text-align:right;font-weight:700;color:#ffd700}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(20,10,40,.95);border:2px solid #ffd700;border-radius:12px;padding:15px 30px;font-family:'Cinzel',serif;color:#ffd700;z-index:1000;animation:toastIn .5s ease;box-shadow:0 10px 40px rgba(0,0,0,.7)}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-30px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.lb-tab{display:inline-block;padding:8px 20px;cursor:pointer;border:2px solid rgba(255,215,0,.2);border-radius:8px 8px 0 0;font-family:'Cinzel',serif;font-size:.85rem;color:#a09070;transition:all .3s;margin:0 2px}
+.lb-tab.active{background:rgba(255,215,0,.1);border-color:#ffd700;color:#ffd700}
+.lb-tab:hover{border-color:#ffd700;color:#ffd700}
+.difficulty-selector{display:flex;gap:10px;justify-content:center;margin:15px 0}
+.diff-btn{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:.85rem;cursor:pointer;border:2px solid rgba(255,215,0,.2);background:rgba(255,215,0,.05);color:#c0a060;transition:all .3s}
+.diff-btn:hover,.diff-btn.active{border-color:#ffd700;color:#ffd700;background:rgba(255,215,0,.12)}
+.diff-btn.easy{border-color:rgba(0,255,136,.3)}.diff-btn.easy.active{border-color:#00ff88;color:#00ff88;background:rgba(0,255,136,.1)}
+.diff-btn.medium{border-color:rgba(255,165,0,.3)}.diff-btn.medium.active{border-color:#ffa500;color:#ffa500;background:rgba(255,165,0,.1)}
+.diff-btn.hard{border-color:rgba(255,68,68,.3)}.diff-btn.hard.active{border-color:#ff4444;color:#ff4444;background:rgba(255,68,68,.1)}
+/* Runner game */
+.runner-canvas{width:100%;height:250px;background:linear-gradient(180deg,#0a0a2e,#1a1a4e);border-radius:12px;border:1px solid rgba(255,215,0,.15);position:relative;overflow:hidden}
+.runner-player{position:absolute;bottom:30px;left:60px;font-size:40px;transition:bottom .15s;z-index:5}
+.runner-obstacle{position:absolute;bottom:30px;font-size:35px;z-index:4}
+.runner-ground{position:absolute;bottom:0;width:100%;height:30px;background:linear-gradient(0deg,#2a1a00,#1a0a00);border-top:2px solid rgba(255,215,0,.15)}
+.runner-coin{position:absolute;font-size:25px;z-index:4}
+.scramble-word{font-family:'Cinzel Decorative',cursive;font-size:2rem;letter-spacing:8px;color:#ffd700;text-shadow:0 0 15px rgba(255,215,0,.5);margin:15px 0;min-height:50px}
+.scramble-input{background:rgba(255,215,0,.08);border:2px solid rgba(255,215,0,.3);border-radius:12px;padding:12px 20px;font-size:1.3rem;color:#ffd700;font-family:'Cinzel',serif;text-align:center;width:100%;max-width:300px;outline:none}
+.scramble-input:focus{border-color:#ffd700;box-shadow:0 0 15px rgba(255,215,0,.2)}
+.streak-display{font-family:'Cinzel Decorative',cursive;font-size:1.2rem;color:#ff8c00;text-shadow:0 0 10px rgba(255,140,0,.5);min-height:30px}
+.music-toggle,.sound-toggle{position:fixed;z-index:100;background:rgba(0,0,0,.5);border:1px solid rgba(255,215,0,.3);border-radius:50%;width:45px;height:45px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;transition:all .3s}
+.music-toggle{top:15px;right:15px}
+.sound-toggle{top:15px;right:70px}
+.music-toggle:hover,.sound-toggle:hover{border-color:#ffd700;background:rgba(255,215,0,.1)}
+.wand-trail{position:fixed;width:6px;height:6px;background:#ffd700;border-radius:50%;pointer-events:none;z-index:50;animation:wandFade .8s ease-out forwards}
+@keyframes wandFade{to{opacity:0;transform:scale(3)}}
+.level-badge{display:inline-block;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a0a00;font-family:'Cinzel',serif;font-weight:700;font-size:.8rem;padding:3px 12px;border-radius:20px;margin-left:8px}
+@media(max-width:500px){.game-container{padding:10px}.memory-grid{grid-template-columns:repeat(3,1fr)}.hub-grid{grid-template-columns:1fr 1fr}.spell-buttons{flex-direction:column}.riddle-card,.trivia-card,.game-area{padding:20px 15px}}
 </style>
 </head>
 <body>
-
-<!-- Stars -->
 <div class="stars" id="stars"></div>
 <div class="particles" id="particles"></div>
-
-<!-- Music & Sound toggles -->
 <div class="music-toggle" id="musicToggle" title="Toggle Music">🎵</div>
 <div class="sound-toggle" id="soundToggle" title="Toggle Sound">🔊</div>
 
 <div class="game-container">
-
-  <!-- SCREEN: Welcome -->
   <div class="screen active" id="screen-welcome">
     <div class="crest">🏰</div>
     <h1 class="game-title">Hogwarts</h1>
     <p class="subtitle">A Magical Adventure Awaits You</p>
     <input type="text" class="magic-input" id="playerName" placeholder="Enter your wizard name..." maxlength="20" autocomplete="off">
     <br><br>
-    <button class="btn gold" id="startBtn" onclick="startSorting()">Begin Your Journey ✨</button>
+    <button class="btn gold" onclick="startSorting()">Begin Your Journey ✨</button>
   </div>
 
-  <!-- SCREEN: Sorting -->
   <div class="screen" id="screen-sorting">
     <h2>🎩 The Sorting Hat Speaks...</h2>
-    <p class="subtitle" id="sortingIntro">Answer these riddles, and I shall reveal your true house!</p>
+    <p class="subtitle">Answer these riddles, and I shall reveal your true house!</p>
     <div class="progress-bar"><div class="progress-fill" id="sortProgress" style="width:0%"></div></div>
-    <p id="riddleCount" style="font-size:0.85rem;color:#a09070;margin-bottom:10px;">Riddle 1 of 5</p>
+    <p id="riddleCount" style="font-size:.85rem;color:#a09070;margin-bottom:10px">Riddle 1 of 5</p>
     <div class="riddle-card" id="riddleCard"></div>
   </div>
 
-  <!-- SCREEN: House Reveal -->
   <div class="screen" id="screen-house">
     <div class="house-reveal" id="houseRevealContent"></div>
   </div>
 
-  <!-- SCREEN: Hub -->
   <div class="screen" id="screen-hub">
-    <div class="score-bar" id="hubScoreBar">
-      <span><span class="house-badge" id="hubHouseBadge"></span> <span id="hubPlayerName"></span> <span class="level-badge" id="hubLevel">Lvl 1</span></span>
-      <span class="points">⭐ <span id="hubPoints">0</span> House Points</span>
+    <div class="score-bar">
+      <span><span id="hubHouseBadge"></span> <span id="hubPlayerName"></span> <span class="level-badge" id="hubLevel">Lvl 1</span></span>
+      <span class="points">⭐ <span id="hubPoints">0</span> pts</span>
     </div>
     <h2>✨ Great Hall</h2>
     <p class="subtitle">Choose your next adventure!</p>
     <div class="hub-grid">
-      <div class="hub-card" onclick="startGame('snitch')">
-        <div class="icon">🏆</div>
-        <div class="name">Catch the Snitch</div>
-        <div class="desc">Quick reflexes needed!</div>
-      </div>
-      <div class="hub-card" onclick="startGame('potion')">
-        <div class="icon">🧪</div>
-        <div class="name">Potion Brewing</div>
-        <div class="desc">Mix magical potions!</div>
-      </div>
-      <div class="hub-card" onclick="startGame('duel')">
-        <div class="icon">⚡</div>
-        <div class="name">Spell Duel</div>
-        <div class="desc">Battle dark wizards!</div>
-      </div>
-      <div class="hub-card" onclick="startGame('memory')">
-        <div class="icon">🃏</div>
-        <div class="name">Memory Magic</div>
-        <div class="desc">Match the magical pairs!</div>
-      </div>
-      <div class="hub-card" onclick="startGame('trivia')">
-        <div class="icon">📚</div>
-        <div class="name">Wizard Trivia</div>
-        <div class="desc">Test your knowledge!</div>
-      </div>
-      <div class="hub-card" onclick="showLeaderboard()">
-        <div class="icon">🏅</div>
-        <div class="name">Leaderboard</div>
-        <div class="desc">See top wizards!</div>
-      </div>
+      <div class="hub-card" onclick="startGame('snitch')"><div class="icon">🏆</div><div class="name">Catch the Snitch</div><div class="desc">Quick reflexes!</div></div>
+      <div class="hub-card" onclick="startGame('potion')"><div class="icon">🧪</div><div class="name">Potion Brewing</div><div class="desc">Mix magical potions!</div></div>
+      <div class="hub-card" onclick="startGame('duel')"><div class="icon">⚡</div><div class="name">Spell Duel</div><div class="desc">Battle dark wizards!</div></div>
+      <div class="hub-card" onclick="startGame('memory')"><div class="icon">🃏</div><div class="name">Memory Magic</div><div class="desc">Match magical pairs!</div></div>
+      <div class="hub-card" onclick="startGame('trivia')"><div class="icon">📚</div><div class="name">Wizard Trivia</div><div class="desc">Test your knowledge!</div></div>
+      <div class="hub-card" onclick="startGame('runner')"><div class="icon">🧹</div><div class="name">Broomstick Run</div><div class="desc">Dodge & collect!</div></div>
+      <div class="hub-card" onclick="startGame('scramble')"><div class="icon">🔤</div><div class="name">Spell Scramble</div><div class="desc">Unscramble spells!</div></div>
+      <div class="hub-card" onclick="showLeaderboard()"><div class="icon">🏅</div><div class="name">Leaderboard</div><div class="desc">Global rankings!</div></div>
     </div>
   </div>
 
-  <!-- SCREEN: Snitch Game -->
+  <!-- Game screens -->
   <div class="screen" id="screen-snitch">
-    <div class="score-bar">
-      <span>🏆 Catch the Snitch</span>
-      <span class="points">Caught: <span id="snitchCaught">0</span></span>
-    </div>
+    <div class="score-bar"><span>🏆 Catch the Snitch</span><span class="points">Caught: <span id="snitchCaught">0</span></span></div>
+    <div id="snitchDiffArea"></div>
     <div class="snitch-timer" id="snitchTimer">30</div>
     <div class="snitch-field" id="snitchField"></div>
-    <p class="snitch-score" id="snitchMsg">Tap the golden snitch! Avoid the bludgers! 🏐</p>
-    <br>
-    <button class="btn small" id="snitchBackBtn" onclick="goHub()" style="display:none;">Back to Great Hall</button>
+    <p id="snitchMsg" style="color:#c0a060;margin-top:10px">Tap the golden snitch! Avoid the bludgers!</p>
+    <div class="streak-display" id="snitchStreak"></div>
+    <br><button class="btn small" id="snitchBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
 
-  <!-- SCREEN: Potion Game -->
   <div class="screen" id="screen-potion">
-    <div class="score-bar">
-      <span>🧪 Potion Brewing</span>
-      <span class="points">Score: <span id="potionScore">0</span></span>
-    </div>
-    <div class="game-area">
-      <div class="cauldron-area">
-        <div class="recipe-card" id="potionRecipe"></div>
-        <div class="potion-progress" id="potionProgress"></div>
-        <div class="cauldron" id="cauldronEmoji">🫕</div>
-        <p id="potionMsg" style="color:#c0a060;font-style:italic;">Add ingredients in the right order!</p>
-        <div class="ingredient-shelf" id="ingredientShelf"></div>
-      </div>
-    </div>
-    <br>
-    <button class="btn small" id="potionBackBtn" onclick="goHub()" style="display:none;">Back to Great Hall</button>
+    <div class="score-bar"><span>🧪 Potion Brewing</span><span class="points">Score: <span id="potionScore">0</span></span></div>
+    <div id="potionDiffArea"></div>
+    <div class="game-area"><div class="cauldron-area">
+      <div class="recipe-card" id="potionRecipe"></div>
+      <div class="potion-progress" id="potionProgress"></div>
+      <div class="cauldron" id="cauldronEmoji">🫕</div>
+      <p id="potionMsg" style="color:#c0a060;font-style:italic">Add ingredients in the right order!</p>
+      <div class="ingredient-shelf" id="ingredientShelf"></div>
+    </div></div>
+    <br><button class="btn small" id="potionBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
 
-  <!-- SCREEN: Spell Duel -->
   <div class="screen" id="screen-duel">
-    <div class="score-bar">
-      <span>⚡ Spell Duel</span>
-      <span class="points">Round: <span id="duelRound">1</span>/5</span>
-    </div>
-    <div class="game-area">
-      <div class="duel-area">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <div style="flex:1;text-align:left;">
-            <div class="hp-label">You</div>
-            <div class="health-bar"><div class="health-fill player" id="playerHP" style="width:100%"></div></div>
-          </div>
-          <div style="width:60px;text-align:center;font-size:1.2rem;">⚔️</div>
-          <div style="flex:1;text-align:right;">
-            <div class="hp-label"><span id="enemyName">Dark Wizard</span></div>
-            <div class="health-bar"><div class="health-fill enemy" id="enemyHP" style="width:100%"></div></div>
-          </div>
-        </div>
-        <div class="opponent" id="duelOpponent">🧙‍♂️</div>
-        <div class="spell-prompt" id="spellPrompt">Get ready...</div>
-        <div class="spell-buttons" id="spellButtons"></div>
-        <p id="duelMsg" style="color:#c0a060;margin-top:12px;min-height:24px;"></p>
+    <div class="score-bar"><span>⚡ Spell Duel</span><span class="points">Round: <span id="duelRound">1</span>/5</span></div>
+    <div class="game-area"><div class="duel-area">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="flex:1;text-align:left"><div class="hp-label">You</div><div class="health-bar"><div class="health-fill player" id="playerHP" style="width:100%"></div></div></div>
+        <div style="width:60px;text-align:center;font-size:1.2rem">⚔️</div>
+        <div style="flex:1;text-align:right"><div class="hp-label"><span id="enemyName">Dark Wizard</span></div><div class="health-bar"><div class="health-fill enemy" id="enemyHP" style="width:100%"></div></div></div>
       </div>
-    </div>
-    <br>
-    <button class="btn small" id="duelBackBtn" onclick="goHub()" style="display:none;">Back to Great Hall</button>
+      <div class="opponent" id="duelOpponent">🧙‍♂️</div>
+      <div class="spell-prompt" id="spellPrompt">Get ready...</div>
+      <div class="spell-buttons" id="spellButtons"></div>
+      <p id="duelMsg" style="color:#c0a060;margin-top:12px;min-height:24px"></p>
+    </div></div>
+    <br><button class="btn small" id="duelBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
 
-  <!-- SCREEN: Memory Game -->
   <div class="screen" id="screen-memory">
-    <div class="score-bar">
-      <span>🃏 Memory Magic</span>
-      <span class="points">Moves: <span id="memoryMoves">0</span></span>
-    </div>
+    <div class="score-bar"><span>🃏 Memory Magic</span><span class="points">Moves: <span id="memoryMoves">0</span></span></div>
+    <div id="memoryDiffArea"></div>
     <div class="game-area">
-      <p style="color:#c0a060;margin-bottom:10px;">Find all matching pairs!</p>
+      <p style="color:#c0a060;margin-bottom:10px">Find all matching pairs!</p>
       <div class="memory-grid" id="memoryGrid"></div>
-      <p id="memoryMsg" style="color:#c0a060;margin-top:10px;"></p>
+      <p id="memoryMsg" style="color:#c0a060;margin-top:10px"></p>
     </div>
-    <br>
-    <button class="btn small" id="memoryBackBtn" onclick="goHub()" style="display:none;">Back to Great Hall</button>
+    <br><button class="btn small" id="memoryBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
 
-  <!-- SCREEN: Trivia -->
   <div class="screen" id="screen-trivia">
-    <div class="score-bar">
-      <span>📚 Wizard Trivia</span>
-      <span class="points">Score: <span id="triviaScore">0</span>/10</span>
-    </div>
+    <div class="score-bar"><span>📚 Wizard Trivia</span><span class="points">Score: <span id="triviaScore">0</span>/10</span></div>
     <div class="progress-bar"><div class="progress-fill" id="triviaProgress" style="width:0%"></div></div>
     <div class="trivia-card" id="triviaCard"></div>
-    <p id="triviaMsg" style="color:#c0a060;margin-top:10px;min-height:24px;"></p>
-    <br>
-    <button class="btn small" id="triviaBackBtn" onclick="goHub()" style="display:none;">Back to Great Hall</button>
+    <p id="triviaMsg" style="color:#c0a060;margin-top:10px;min-height:24px"></p>
+    <div class="streak-display" id="triviaStreak"></div>
+    <br><button class="btn small" id="triviaBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
 
-  <!-- SCREEN: Leaderboard -->
+  <div class="screen" id="screen-runner">
+    <div class="score-bar"><span>🧹 Broomstick Run</span><span class="points">Score: <span id="runnerScore">0</span></span></div>
+    <div class="game-area" style="padding:10px">
+      <div class="runner-canvas" id="runnerCanvas">
+        <div class="runner-ground"></div>
+        <div class="runner-player" id="runnerPlayer">🧹</div>
+      </div>
+      <p id="runnerMsg" style="color:#c0a060;margin-top:10px">Tap or press SPACE to jump! Collect coins, dodge obstacles!</p>
+      <div class="streak-display" id="runnerCombo"></div>
+    </div>
+    <br><button class="btn small" id="runnerBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
+  </div>
+
+  <div class="screen" id="screen-scramble">
+    <div class="score-bar"><span>🔤 Spell Scramble</span><span class="points">Score: <span id="scrambleScore">0</span></span></div>
+    <div class="game-area">
+      <p style="color:#c0a060;margin-bottom:10px">Unscramble the spell name!</p>
+      <div class="scramble-word" id="scrambleWord"></div>
+      <p id="scrambleHint" style="color:#a09070;font-style:italic;margin-bottom:15px;min-height:20px"></p>
+      <input type="text" class="scramble-input" id="scrambleInput" placeholder="Type the spell..." autocomplete="off">
+      <br><br>
+      <button class="btn small" onclick="checkScramble()">Cast! ⚡</button>
+      <p id="scrambleMsg" style="color:#c0a060;margin-top:10px;min-height:24px"></p>
+      <div class="streak-display" id="scrambleStreak"></div>
+      <p id="scrambleTimer" style="font-family:'Cinzel Decorative',cursive;font-size:1.5rem;color:#ffd700;margin-top:10px"></p>
+    </div>
+    <br><button class="btn small" id="scrambleBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
+  </div>
+
   <div class="screen" id="screen-leaderboard">
     <h2>🏅 Hogwarts Leaderboard</h2>
+    <div style="margin-bottom:15px">
+      <span class="lb-tab active" id="tabGlobal" onclick="switchLBTab('global')">🏆 All Wizards</span>
+      <span class="lb-tab" id="tabLocal" onclick="switchLBTab('local')">⭐ My Best</span>
+    </div>
     <div class="leaderboard" id="leaderboardTable"></div>
-    <br>
-    <button class="btn small" onclick="goHub()">Back to Great Hall</button>
+    <p id="lbStatus" style="color:#a09070;font-size:.8rem;margin-top:8px"></p>
+    <br><button class="btn small" onclick="goHub()">Back to Great Hall</button>
   </div>
-
-  <!-- SCREEN: Game Over / Results -->
-  <div class="screen" id="screen-results">
-    <div id="resultsContent"></div>
-    <br>
-    <button class="btn gold" onclick="goHub()">Return to Great Hall ✨</button>
-  </div>
-
 </div>
 
 <script>
 // ============================================================
-// GAME STATE
+// STATE
 // ============================================================
-const STATE = {
-  playerName: '',
-  house: '',
-  houseEmoji: '',
-  houseScores: { gryffindor: 0, hufflepuff: 0, ravenclaw: 0, slytherin: 0 },
-  totalPoints: 0,
-  level: 1,
-  musicOn: false,
-  soundOn: true,
-  audioCtx: null,
+const S = {
+  name:'', house:'', houseEmoji:'', houseScores:{gryffindor:0,hufflepuff:0,ravenclaw:0,slytherin:0},
+  pts:0, level:1, musicOn:false, soundOn:true, audioCtx:null, streak:0, bestStreak:0,
+  difficulty:'easy' // easy, medium, hard
 };
 
-// Leaderboard from localStorage
-function getLeaderboard() {
+// ============================================================
+// LEADERBOARD (localStorage-based, persistent per device)
+// ============================================================
+let globalLB = [];
+let lbTab = 'global';
+
+async function fetchGlobalLB() {
+  globalLB = getLocalLB();
+}
+
+async function pushGlobalLB() {
+  saveLocalLB();
+  globalLB = getLocalLB();
+}
+
+function getLocalLB() {
   try { return JSON.parse(localStorage.getItem('hogwartsLB') || '[]'); } catch { return []; }
 }
-function saveLeaderboard(lb) {
-  localStorage.setItem('hogwartsLB', JSON.stringify(lb.slice(0, 20)));
+function saveLocalLB() {
+  let lb = getLocalLB();
+  const ex = lb.findIndex(e => e.name === S.name);
+  if (ex >= 0) { if (S.pts > lb[ex].score) lb[ex].score = S.pts; lb[ex].house = S.houseEmoji; }
+  else lb.push({ name: S.name, score: S.pts, house: S.houseEmoji });
+  lb.sort((a,b) => b.score - a.score);
+  localStorage.setItem('hogwartsLB', JSON.stringify(lb.slice(0, 30)));
 }
-function updateLeaderboard() {
-  let lb = getLeaderboard();
-  const existing = lb.findIndex(e => e.name === STATE.playerName);
-  if (existing >= 0) {
-    if (STATE.totalPoints > lb[existing].score) lb[existing].score = STATE.totalPoints;
-    lb[existing].house = STATE.houseEmoji;
-  } else {
-    lb.push({ name: STATE.playerName, score: STATE.totalPoints, house: STATE.houseEmoji });
+
+function switchLBTab(tab) {
+  lbTab = tab;
+  document.getElementById('tabGlobal').classList.toggle('active', tab === 'global');
+  document.getElementById('tabLocal').classList.toggle('active', tab === 'local');
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const lb = lbTab === 'global' ? globalLB : getLocalLB();
+  const table = document.getElementById('leaderboardTable');
+  const status = document.getElementById('lbStatus');
+
+  if (!lb.length) {
+    table.innerHTML = '<div style="padding:30px;text-align:center;color:#a09070">No wizards yet! Play games to earn points!</div>';
+    status.textContent = '';
+    return;
   }
-  lb.sort((a, b) => b.score - a.score);
-  saveLeaderboard(lb);
+  table.innerHTML = `<div class="lb-header"><span style="width:40px">#</span><span style="flex:1">Wizard</span><span style="width:30px">🏠</span><span style="width:70px;text-align:right">Points</span></div>
+    ${lb.slice(0,20).map((e,i) => `<div class="lb-row ${e.name===S.name?'current':''}">
+      <span class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span>
+      <span class="lb-name">${e.name}</span>
+      <span class="lb-house">${e.house||'❓'}</span>
+      <span class="lb-score">${e.score}</span>
+    </div>`).join('')}`;
+  status.textContent = lbTab === 'global' ? `${lb.length} wizards worldwide` : `${lb.length} local entries`;
 }
 
 // ============================================================
-// AUDIO ENGINE — Rich Magical Fantasy Soundtrack
-// Celesta, harp, and orchestral bell textures via Web Audio API
+// AUDIO ENGINE — Orchestral Fantasy via Web Audio API
 // ============================================================
 function initAudio() {
-  if (!STATE.audioCtx) {
-    STATE.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    // Master reverb for magical atmosphere
-    const convolver = STATE.audioCtx.createConvolver();
-    const rate = STATE.audioCtx.sampleRate;
-    const length = rate * 2.5;
-    const impulse = STATE.audioCtx.createBuffer(2, length, rate);
-    for (let ch = 0; ch < 2; ch++) {
-      const data = impulse.getChannelData(ch);
-      for (let i = 0; i < length; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
-      }
-    }
-    convolver.buffer = impulse;
-    const wet = STATE.audioCtx.createGain();
-    wet.gain.value = 0.25;
-    convolver.connect(wet);
-    wet.connect(STATE.audioCtx.destination);
-    STATE.reverb = convolver;
-    STATE.reverbWet = wet;
+  if (!S.audioCtx) {
+    S.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Reverb
+    const conv = S.audioCtx.createConvolver();
+    const rate = S.audioCtx.sampleRate;
+    const len = rate * 2.5;
+    const imp = S.audioCtx.createBuffer(2, len, rate);
+    for (let ch = 0; ch < 2; ch++) { const d = imp.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random()*2-1)*Math.pow(1-i/len,2.5); }
+    conv.buffer = imp;
+    const wet = S.audioCtx.createGain(); wet.gain.value = 0.3;
+    conv.connect(wet); wet.connect(S.audioCtx.destination);
+    S.reverb = conv;
   }
 }
 
-// Celesta-like bell tone (two detuned sines + fast decay)
-function playCelesta(freq, dur = 0.8, vol = 0.12) {
-  if (!STATE.soundOn) return;
+function playCelesta(freq, dur=0.8, vol=0.12) {
+  if (!S.soundOn) return;
   try {
-    initAudio();
-    const ctx = STATE.audioCtx;
-    const t = ctx.currentTime;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(vol, t);
-    g.gain.exponentialRampToValueAtTime(vol * 0.6, t + 0.05);
-    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-
-    // Fundamental
-    const o1 = ctx.createOscillator();
-    o1.type = 'sine';
-    o1.frequency.setValueAtTime(freq, t);
-    o1.connect(g);
-
-    // Harmonic shimmer (octave + 3 cents detune)
-    const o2 = ctx.createOscillator();
-    o2.type = 'sine';
-    o2.frequency.setValueAtTime(freq * 2.003, t);
-    const g2 = ctx.createGain();
-    g2.gain.setValueAtTime(vol * 0.3, t);
-    g2.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.6);
-    o2.connect(g2);
-    g2.connect(g);
-
-    // Soft upper partial for sparkle
-    const o3 = ctx.createOscillator();
-    o3.type = 'sine';
-    o3.frequency.setValueAtTime(freq * 3, t);
-    const g3 = ctx.createGain();
-    g3.gain.setValueAtTime(vol * 0.08, t);
-    g3.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.3);
-    o3.connect(g3);
-    g3.connect(g);
-
-    g.connect(ctx.destination);
-    g.connect(STATE.reverb);
-    [o1, o2, o3].forEach(o => { o.start(t); o.stop(t + dur); });
-  } catch(e) {}
+    initAudio(); const ctx=S.audioCtx, t=ctx.currentTime;
+    const g=ctx.createGain(); g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(vol*.6,t+.05); g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    const o1=ctx.createOscillator(); o1.type='sine'; o1.frequency.setValueAtTime(freq,t); o1.connect(g);
+    const o2=ctx.createOscillator(); o2.type='sine'; o2.frequency.setValueAtTime(freq*2.003,t);
+    const g2=ctx.createGain(); g2.gain.setValueAtTime(vol*.3,t); g2.gain.exponentialRampToValueAtTime(.001,t+dur*.6); o2.connect(g2); g2.connect(g);
+    const o3=ctx.createOscillator(); o3.type='sine'; o3.frequency.setValueAtTime(freq*3,t);
+    const g3=ctx.createGain(); g3.gain.setValueAtTime(vol*.08,t); g3.gain.exponentialRampToValueAtTime(.001,t+dur*.3); o3.connect(g3); g3.connect(g);
+    g.connect(ctx.destination); g.connect(S.reverb);
+    [o1,o2,o3].forEach(o=>{o.start(t);o.stop(t+dur)});
+  } catch(e){}
 }
 
-// Harp pluck (triangle wave with quick attack/decay)
-function playHarp(freq, dur = 1.2, vol = 0.08) {
-  if (!STATE.soundOn) return;
+function playHarp(freq, dur=1.2, vol=0.08) {
+  if (!S.soundOn) return;
   try {
-    initAudio();
-    const ctx = STATE.audioCtx;
-    const t = ctx.currentTime;
-    const o = ctx.createOscillator();
-    o.type = 'triangle';
-    o.frequency.setValueAtTime(freq, t);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(vol, t + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-    o.connect(g);
-    g.connect(ctx.destination);
-    g.connect(STATE.reverb);
-    o.start(t);
-    o.stop(t + dur);
-  } catch(e) {}
+    initAudio(); const ctx=S.audioCtx, t=ctx.currentTime;
+    const o=ctx.createOscillator(); o.type='triangle'; o.frequency.setValueAtTime(freq,t);
+    const g=ctx.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o.connect(g); g.connect(ctx.destination); g.connect(S.reverb); o.start(t); o.stop(t+dur);
+  } catch(e){}
 }
 
-// Quick note for SFX
-function playNote(freq, dur = 0.3, type = 'sine', vol = 0.12) {
-  if (!STATE.soundOn) return;
+// Strings pad for richer atmosphere
+function playStrings(freq, dur=2, vol=0.04) {
+  if (!S.soundOn) return;
   try {
-    initAudio();
-    const ctx = STATE.audioCtx;
-    const t = ctx.currentTime;
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = type;
-    o.frequency.setValueAtTime(freq, t);
-    g.gain.setValueAtTime(vol, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-    o.connect(g);
-    g.connect(ctx.destination);
-    if (STATE.reverb) g.connect(STATE.reverb);
-    o.start(t);
-    o.stop(t + dur);
-  } catch(e) {}
+    initAudio(); const ctx=S.audioCtx, t=ctx.currentTime;
+    const o1=ctx.createOscillator(); o1.type='sawtooth'; o1.frequency.setValueAtTime(freq,t);
+    const o2=ctx.createOscillator(); o2.type='sawtooth'; o2.frequency.setValueAtTime(freq*1.003,t);
+    const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.setValueAtTime(800,t);
+    const g=ctx.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.3); g.gain.linearRampToValueAtTime(vol*.8,t+dur-.5); g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o1.connect(f); o2.connect(f); f.connect(g); g.connect(ctx.destination); g.connect(S.reverb);
+    [o1,o2].forEach(o=>{o.start(t);o.stop(t+dur)});
+  } catch(e){}
 }
 
-// --- SFX ---
-function playMagicChime() {
-  // Ascending celesta sparkle
-  [523, 659, 784, 1047, 1319].forEach((f, i) =>
-    setTimeout(() => playCelesta(f, 0.9, 0.1), i * 130)
-  );
+function playNote(freq, dur=0.3, type='sine', vol=0.12) {
+  if (!S.soundOn) return;
+  try {
+    initAudio(); const ctx=S.audioCtx,t=ctx.currentTime;
+    const o=ctx.createOscillator(),g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o.connect(g); g.connect(ctx.destination); if(S.reverb) g.connect(S.reverb); o.start(t); o.stop(t+dur);
+  } catch(e){}
 }
 
-function playSuccess() {
-  // Bright harp arpeggio + celesta top
-  [523, 659, 784].forEach((f, i) => setTimeout(() => playHarp(f, 0.8, 0.1), i * 80));
-  setTimeout(() => playCelesta(1047, 0.6, 0.08), 280);
-}
-
-function playFail() {
-  // Minor second clash, low
-  playCelesta(311, 0.6, 0.08);
-  setTimeout(() => playCelesta(294, 0.6, 0.08), 80);
-  setTimeout(() => playNote(185, 0.5, 'triangle', 0.06), 160);
-}
-
-function playClick() {
-  playCelesta(1200, 0.12, 0.06);
-}
-
-function playSortingReveal() {
-  // Grand ascending fanfare with celesta + harp
-  const fanfare = [262, 330, 392, 523, 659, 784, 1047, 1319];
-  fanfare.forEach((f, i) => {
-    setTimeout(() => playCelesta(f, 1.2, 0.09), i * 180);
-    if (i % 2 === 0) setTimeout(() => playHarp(f / 2, 1.5, 0.06), i * 180 + 50);
-  });
-}
+function playMagicChime(){[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>playCelesta(f,.9,.1),i*130))}
+function playSuccess(){[523,659,784].forEach((f,i)=>setTimeout(()=>playHarp(f,.8,.1),i*80));setTimeout(()=>playCelesta(1047,.6,.08),280)}
+function playFail(){playCelesta(311,.6,.08);setTimeout(()=>playCelesta(294,.6,.08),80)}
+function playClick(){playCelesta(1200,.12,.06)}
+function playSortingReveal(){const f=[262,330,392,523,659,784,1047,1319];f.forEach((n,i)=>{setTimeout(()=>playCelesta(n,1.2,.09),i*180);if(i%2===0)setTimeout(()=>playHarp(n/2,1.5,.06),i*180+50);if(i%3===0)setTimeout(()=>playStrings(n/4,2,.03),i*180)})}
 
 // ============================================================
-// BACKGROUND MUSIC — Magical Fantasy Theme
-// Original composition: mysterious, whimsical, Hogwarts-esque
-// Celesta melody + harp arpeggios + drone bass
+// BACKGROUND MUSIC — Hedwig-inspired original in E minor
+// Celesta melody + harp arpeggios + string pad
+// Waltz time (3/4) like the original theme
 // ============================================================
-let musicTimeouts = [];
-let musicPlaying = false;
+let musicTimeouts=[], musicPlaying=false;
 
-// Melody in B minor / D major — mysterious and magical feel
-// Each entry: [frequency, duration_ms, delay_from_start]
-function composeMagicTheme() {
-  const BPM = 72;
-  const beat = 60000 / BPM;
-  const half = beat / 2;
-  const qtr = beat / 4;
+function composeHedwigTheme() {
+  const BPM=160; // Waltz tempo
+  const beat=60000/BPM;
 
-  // Frequencies: B3=247, D4=294, E4=330, F#4=370, G4=392, A4=440, B4=494, D5=587, E5=659, F#5=740, G5=784, A5=880, B5=988
+  // E minor waltz melody (celesta) — mysterious, whimsical, 3/4 time
+  // E4=330, F#4=370, G4=392, A4=440, B4=494, C5=523, D5=587, E5=659, F#5=740, G5=784
   const melody = [
-    // Phrase 1: Mysterious opening (celesta)
-    { f: 494, t: 0, dur: 1.2 },          // B4
-    { f: 659, t: beat, dur: 0.8 },        // E5
-    { f: 587, t: beat*1.5, dur: 0.6 },    // D5
-    { f: 494, t: beat*2, dur: 1.5 },      // B4
-    { f: 440, t: beat*3, dur: 0.8 },      // A4
-    { f: 494, t: beat*3.75, dur: 0.5 },   // B4
-    { f: 587, t: beat*4.5, dur: 1.5 },    // D5 hold
-    // Rest
-    // Phrase 2: Ascending wonder
-    { f: 392, t: beat*6, dur: 0.8 },      // G4
-    { f: 440, t: beat*6.5, dur: 0.6 },    // A4
-    { f: 494, t: beat*7, dur: 1.0 },      // B4
-    { f: 587, t: beat*8, dur: 0.8 },      // D5
-    { f: 740, t: beat*8.75, dur: 0.5 },   // F#5
-    { f: 659, t: beat*9.25, dur: 0.6 },   // E5
-    { f: 587, t: beat*10, dur: 1.5 },     // D5 hold
-    // Phrase 3: Playful descent
-    { f: 784, t: beat*12, dur: 0.7 },     // G5
-    { f: 740, t: beat*12.5, dur: 0.5 },   // F#5
-    { f: 659, t: beat*13, dur: 0.7 },     // E5
-    { f: 587, t: beat*13.5, dur: 0.5 },   // D5
-    { f: 494, t: beat*14, dur: 0.7 },     // B4
-    { f: 440, t: beat*14.5, dur: 0.5 },   // A4
-    { f: 392, t: beat*15, dur: 1.5 },     // G4 hold
-    // Phrase 4: Resolving with magic
-    { f: 370, t: beat*17, dur: 0.8 },     // F#4
-    { f: 440, t: beat*17.75, dur: 0.6 },  // A4
-    { f: 494, t: beat*18.5, dur: 1.0 },   // B4
-    { f: 587, t: beat*19.5, dur: 0.8 },   // D5
-    { f: 494, t: beat*20.5, dur: 1.5 },   // B4 resolve
-    // Gentle ending
-    { f: 392, t: beat*22, dur: 1.0 },     // G4
-    { f: 370, t: beat*23, dur: 1.0 },     // F#4
-    { f: 330, t: beat*24, dur: 2.0 },     // E4 final
+    // Bar 1-2: Opening motif
+    {f:494,t:0,dur:.6},              // B4 (pickup)
+    {f:659,t:beat*1,dur:1},          // E5
+    {f:784,t:beat*2.5,dur:.4},       // G5
+    {f:740,t:beat*3,dur:.6},         // F#5
+    {f:659,t:beat*4,dur:1.2},        // E5 (hold)
+    // Bar 3-4
+    {f:494,t:beat*6,dur:1.5},        // B4 (hold)
+    {f:659,t:beat*9,dur:1},          // E5
+    {f:784,t:beat*10.5,dur:.4},      // G5
+    {f:740,t:beat*11,dur:.6},        // F#5
+    // Bar 5-6
+    {f:587,t:beat*12,dur:1.5},       // D5 (hold)
+    {f:740,t:beat*15,dur:1.5},       // F#5 (hold)
+    // Bar 7-8
+    {f:494,t:beat*18,dur:.6},        // B4
+    {f:659,t:beat*19,dur:1},         // E5
+    {f:784,t:beat*20.5,dur:.4},      // G5
+    {f:880,t:beat*21,dur:.6},        // A5
+    {f:784,t:beat*22,dur:1},         // G5
+    // Bar 9-10
+    {f:659,t:beat*24,dur:1},         // E5
+    {f:784,t:beat*25.5,dur:.4},      // G5
+    {f:740,t:beat*26,dur:.6},        // F#5
+    {f:587,t:beat*27,dur:.6},        // D5
+    // Bar 11-12: Resolve
+    {f:523,t:beat*28,dur:.6},        // C5
+    {f:494,t:beat*29,dur:1},         // B4
+    {f:392,t:beat*30,dur:.6},        // G4
+    {f:330,t:beat*31,dur:2},         // E4 (final)
   ];
 
-  // Harp arpeggios (lower register, gentle)
-  const harpNotes = [
-    { f: 123, t: 0, dur: 2.0 },           // B2
-    { f: 147, t: beat*0.5, dur: 1.5 },    // D3
-    { f: 185, t: beat*1, dur: 1.5 },      // F#3
-    { f: 123, t: beat*3, dur: 2.0 },
-    { f: 147, t: beat*3.5, dur: 1.5 },
-    { f: 196, t: beat*4, dur: 1.5 },      // G3
-    { f: 131, t: beat*6, dur: 2.0 },      // C3
-    { f: 165, t: beat*6.5, dur: 1.5 },    // E3
-    { f: 196, t: beat*7, dur: 1.5 },
-    { f: 123, t: beat*9, dur: 2.0 },
-    { f: 147, t: beat*9.5, dur: 1.5 },
-    { f: 185, t: beat*10, dur: 1.5 },
-    { f: 123, t: beat*12, dur: 2.0 },
-    { f: 147, t: beat*12.5, dur: 1.5 },
-    { f: 185, t: beat*13, dur: 1.5 },
-    { f: 131, t: beat*15, dur: 2.0 },
-    { f: 165, t: beat*15.5, dur: 1.5 },
-    { f: 196, t: beat*16, dur: 1.5 },
-    { f: 123, t: beat*18, dur: 2.0 },
-    { f: 147, t: beat*18.5, dur: 1.5 },
-    { f: 185, t: beat*19, dur: 1.5 },
-    { f: 123, t: beat*21, dur: 2.0 },
-    { f: 147, t: beat*21.5, dur: 1.5 },
-    { f: 165, t: beat*22, dur: 1.5 },
-    { f: 123, t: beat*24, dur: 3.0 },
+  // Harp (lower, waltz bass — beat 1 of each bar)
+  const harp = [
+    {f:165,t:0,dur:2},          // E3
+    {f:247,t:beat*.5,dur:1.5},  // B3
+    {f:196,t:beat*1,dur:1.5},   // G3
+    {f:165,t:beat*3,dur:2},
+    {f:247,t:beat*3.5,dur:1.5},
+    {f:196,t:beat*4,dur:1.5},
+    {f:165,t:beat*6,dur:2},
+    {f:247,t:beat*6.5,dur:1.5},
+    {f:196,t:beat*7,dur:1.5},
+    {f:147,t:beat*9,dur:2},     // D3
+    {f:220,t:beat*9.5,dur:1.5}, // A3
+    {f:185,t:beat*10,dur:1.5},  // F#3
+    {f:147,t:beat*12,dur:2},
+    {f:220,t:beat*12.5,dur:1.5},
+    {f:185,t:beat*13,dur:1.5},
+    {f:165,t:beat*15,dur:2},
+    {f:247,t:beat*15.5,dur:1.5},
+    {f:196,t:beat*16,dur:1.5},
+    {f:165,t:beat*18,dur:2},
+    {f:247,t:beat*18.5,dur:1.5},
+    {f:196,t:beat*19,dur:1.5},
+    {f:165,t:beat*21,dur:2},
+    {f:247,t:beat*21.5,dur:1.5},
+    {f:196,t:beat*22,dur:1.5},
+    {f:131,t:beat*24,dur:2},    // C3
+    {f:196,t:beat*24.5,dur:1.5},
+    {f:165,t:beat*25,dur:1.5},
+    {f:165,t:beat*27,dur:2},
+    {f:247,t:beat*27.5,dur:1.5},
+    {f:196,t:beat*28,dur:1.5},
+    {f:165,t:beat*30,dur:3},
   ];
 
-  const totalDuration = beat * 26;
-  return { melody, harpNotes, totalDuration };
+  // String pad (sustained chords, very quiet)
+  const strings = [
+    {f:165,t:0,dur:beat*6/1000*3},        // Em
+    {f:196,t:0,dur:beat*6/1000*3},
+    {f:165,t:beat*6,dur:beat*6/1000*3},    // Em
+    {f:247,t:beat*6,dur:beat*6/1000*3},
+    {f:147,t:beat*12,dur:beat*6/1000*3},   // D
+    {f:220,t:beat*12,dur:beat*6/1000*3},
+    {f:165,t:beat*18,dur:beat*6/1000*3},   // Em
+    {f:196,t:beat*18,dur:beat*6/1000*3},
+    {f:131,t:beat*24,dur:beat*6/1000*3},   // C
+    {f:196,t:beat*24,dur:beat*6/1000*3},
+    {f:165,t:beat*30,dur:beat*4/1000*3},   // Em final
+  ];
+
+  return { melody, harp, strings, totalDuration: beat * 34 };
 }
 
 function startMusic() {
   if (musicPlaying) return;
   musicPlaying = true;
-
   function playLoop() {
-    if (!STATE.musicOn || !musicPlaying) return;
-    const theme = composeMagicTheme();
-
-    // Play celesta melody
-    theme.melody.forEach(n => {
-      const id = setTimeout(() => {
-        if (STATE.musicOn && musicPlaying) playCelesta(n.f, n.dur, 0.07);
-      }, n.t);
-      musicTimeouts.push(id);
-    });
-
-    // Play harp arpeggios
-    theme.harpNotes.forEach(n => {
-      const id = setTimeout(() => {
-        if (STATE.musicOn && musicPlaying) playHarp(n.f, n.dur, 0.05);
-      }, n.t);
-      musicTimeouts.push(id);
-    });
-
-    // Schedule next loop
-    const id = setTimeout(() => {
-      if (STATE.musicOn && musicPlaying) playLoop();
-    }, theme.totalDuration + 800);
-    musicTimeouts.push(id);
+    if (!S.musicOn || !musicPlaying) return;
+    const theme = composeHedwigTheme();
+    theme.melody.forEach(n => { const id=setTimeout(()=>{if(S.musicOn&&musicPlaying)playCelesta(n.f,n.dur,.07)},n.t); musicTimeouts.push(id); });
+    theme.harp.forEach(n => { const id=setTimeout(()=>{if(S.musicOn&&musicPlaying)playHarp(n.f,n.dur,.05)},n.t); musicTimeouts.push(id); });
+    theme.strings.forEach(n => { const id=setTimeout(()=>{if(S.musicOn&&musicPlaying)playStrings(n.f,n.dur,.025)},n.t); musicTimeouts.push(id); });
+    const id=setTimeout(()=>{if(S.musicOn&&musicPlaying)playLoop()},theme.totalDuration+500); musicTimeouts.push(id);
   }
-
   playLoop();
 }
+function stopMusic(){musicPlaying=false;musicTimeouts.forEach(id=>clearTimeout(id));musicTimeouts=[]}
 
-function stopMusic() {
-  musicPlaying = false;
-  musicTimeouts.forEach(id => clearTimeout(id));
-  musicTimeouts = [];
-}
-
-document.getElementById('musicToggle').onclick = () => {
-  initAudio();
-  if (STATE.audioCtx.state === 'suspended') STATE.audioCtx.resume();
-  STATE.musicOn = !STATE.musicOn;
-  document.getElementById('musicToggle').textContent = STATE.musicOn ? '🎵' : '🔇';
-  if (STATE.musicOn) startMusic(); else stopMusic();
+document.getElementById('musicToggle').onclick=()=>{
+  initAudio(); if(S.audioCtx.state==='suspended')S.audioCtx.resume();
+  S.musicOn=!S.musicOn;
+  document.getElementById('musicToggle').textContent=S.musicOn?'🎵':'🔇';
+  if(S.musicOn)startMusic();else stopMusic();
 };
-document.getElementById('soundToggle').onclick = () => {
-  STATE.soundOn = !STATE.soundOn;
-  document.getElementById('soundToggle').textContent = STATE.soundOn ? '🔊' : '🔈';
+document.getElementById('soundToggle').onclick=()=>{
+  S.soundOn=!S.soundOn;
+  document.getElementById('soundToggle').textContent=S.soundOn?'🔊':'🔈';
 };
 
 // ============================================================
-// STARS & PARTICLES
+// STARS, PARTICLES, WAND
 // ============================================================
-function createStars() {
-  const c = document.getElementById('stars');
-  for (let i = 0; i < 80; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const size = Math.random() * 3 + 1;
-    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${Math.random()*3+2}s;animation-delay:${Math.random()*3}s;`;
-    c.appendChild(s);
+(function(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*3+1;s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${Math.random()*3+2}s;animation-delay:${Math.random()*3}s`;c.appendChild(s)}
+  const p=document.getElementById('particles');
+  for(let i=0;i<15;i++){const d=document.createElement('div');d.className='particle';d.style.cssText=`left:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${Math.random()*4+4}s`;p.appendChild(d)}
+})();
+document.addEventListener('mousemove',e=>{if(Math.random()>.7){const t=document.createElement('div');t.className='wand-trail';t.style.left=e.clientX+'px';t.style.top=e.clientY+'px';document.body.appendChild(t);setTimeout(()=>t.remove(),800)}});
+
+// ============================================================
+// SCREEN MGMT / POINTS
+// ============================================================
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active')}
+function showToast(msg,dur=2500){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .5s';setTimeout(()=>t.remove(),500)},dur)}
+
+function addPoints(pts){
+  S.pts+=pts;
+  const nl=Math.floor(S.pts/100)+1;
+  if(nl>S.level){S.level=nl;showToast(`⬆️ Level Up! Level ${S.level}!`);playMagicChime()}
+  updateHub(); pushGlobalLB();
+}
+function updateHub(){
+  document.getElementById('hubPoints').textContent=S.pts;
+  document.getElementById('hubLevel').textContent=`Lvl ${S.level}`;
+}
+function goHub(){showScreen('hub');updateHub()}
+function startGame(g){
+  playClick();
+  switch(g){
+    case 'snitch':startSnitch();break;case 'potion':startPotion();break;case 'duel':startDuel();break;
+    case 'memory':startMemory();break;case 'trivia':startTrivia();break;case 'runner':startRunner();break;
+    case 'scramble':startScramble();break;
   }
 }
-function createParticles() {
-  const c = document.getElementById('particles');
-  for (let i = 0; i < 15; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.style.cssText = `left:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${Math.random()*4+4}s;`;
-    c.appendChild(p);
-  }
-}
-createStars();
-createParticles();
-
-// Wand trail
-document.addEventListener('mousemove', (e) => {
-  if (Math.random() > 0.7) {
-    const t = document.createElement('div');
-    t.className = 'wand-trail';
-    t.style.left = e.clientX + 'px';
-    t.style.top = e.clientY + 'px';
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 800);
-  }
-});
 
 // ============================================================
-// SCREEN MANAGEMENT
+// DIFFICULTY SELECTOR
 // ============================================================
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
+function makeDiffSelector(containerId, cb) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  c.innerHTML = `<div class="difficulty-selector">
+    <span class="diff-btn easy ${S.difficulty==='easy'?'active':''}" onclick="setDiff('easy','${containerId}')">⭐ Easy</span>
+    <span class="diff-btn medium ${S.difficulty==='medium'?'active':''}" onclick="setDiff('medium','${containerId}')">⭐⭐ Medium</span>
+    <span class="diff-btn hard ${S.difficulty==='hard'?'active':''}" onclick="setDiff('hard','${containerId}')">⭐⭐⭐ Hard</span>
+  </div>`;
 }
-
-function showToast(msg, dur = 2500) {
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.5s'; setTimeout(() => t.remove(), 500); }, dur);
+function setDiff(d, containerId) {
+  S.difficulty = d;
+  document.querySelectorAll(`#${containerId} .diff-btn`).forEach(b => b.classList.remove('active'));
+  document.querySelector(`#${containerId} .diff-btn.${d}`).classList.add('active');
 }
-
-function addPoints(pts) {
-  STATE.totalPoints += pts;
-  const newLevel = Math.floor(STATE.totalPoints / 100) + 1;
-  if (newLevel > STATE.level) {
-    STATE.level = newLevel;
-    showToast(`⬆️ Level Up! You are now Level ${STATE.level}!`);
-    playMagicChime();
-  }
-  updateHubDisplay();
-  updateLeaderboard();
-}
-
-function updateHubDisplay() {
-  document.getElementById('hubPoints').textContent = STATE.totalPoints;
-  document.getElementById('hubLevel').textContent = `Lvl ${STATE.level}`;
-}
-
-function goHub() {
-  showScreen('hub');
-  updateHubDisplay();
-}
-
-// ============================================================
-// ENTER KEY on name input
-// ============================================================
-document.getElementById('playerName').addEventListener('keydown', e => {
-  if (e.key === 'Enter') startSorting();
-});
 
 // ============================================================
 // SORTING CEREMONY
 // ============================================================
-const sortingRiddles = [
-  {
-    q: "You find a lost puppy in the rain. What do you do?",
-    opts: [
-      { text: "🦁 Rush out bravely to rescue it right away!", house: "gryffindor" },
-      { text: "🦡 Wrap it in your warm coat and find its owner", house: "hufflepuff" },
-      { text: "🦅 Think of the smartest way to help it get home", house: "ravenclaw" },
-      { text: "🐍 Make a clever plan to train it as your loyal pet", house: "slytherin" }
-    ]
-  },
-  {
-    q: "Your friend is scared of the dark forest. You...",
-    opts: [
-      { text: "🦁 Take their hand and go in together!", house: "gryffindor" },
-      { text: "🦡 Stay with them and tell funny stories until they feel better", house: "hufflepuff" },
-      { text: "🦅 Explain that the forest is actually full of amazing creatures", house: "ravenclaw" },
-      { text: "🐍 Go ahead first to make sure it's safe, then call them", house: "slytherin" }
-    ]
-  },
-  {
-    q: "You discover a secret room in a castle! Inside you hope to find...",
-    opts: [
-      { text: "🦁 A magical sword that glows in the dark!", house: "gryffindor" },
-      { text: "🦡 A cozy room full of yummy food and comfy chairs", house: "hufflepuff" },
-      { text: "🦅 An ancient library with books about every spell ever made", house: "ravenclaw" },
-      { text: "🐍 A treasure chest filled with rare magical objects", house: "slytherin" }
-    ]
-  },
-  {
-    q: "A dragon blocks the path! What's your move?",
-    opts: [
-      { text: "🦁 Stand tall and face the dragon with courage!", house: "gryffindor" },
-      { text: "🦡 Offer the dragon some food — maybe it's just hungry!", house: "hufflepuff" },
-      { text: "🦅 Study the dragon's behavior to find a safe way around", house: "ravenclaw" },
-      { text: "🐍 Use a clever trick to sneak past while it's distracted", house: "slytherin" }
-    ]
-  },
-  {
-    q: "What would you most like to be remembered for?",
-    opts: [
-      { text: "🦁 Being the bravest wizard who ever lived!", house: "gryffindor" },
-      { text: "🦡 Being the kindest friend anyone could ever have", house: "hufflepuff" },
-      { text: "🦅 Being the wisest and most brilliant mind of all time", house: "ravenclaw" },
-      { text: "🐍 Being the most powerful and successful wizard in history", house: "slytherin" }
-    ]
-  }
+const sortingRiddles=[
+  {q:"You find a lost puppy in the rain. What do you do?",opts:[{text:"🦁 Rush out bravely to rescue it!",house:"gryffindor"},{text:"🦡 Wrap it in your warm coat and find its owner",house:"hufflepuff"},{text:"🦅 Think of the smartest way to help it home",house:"ravenclaw"},{text:"🐍 Make a clever plan to train it as your pet",house:"slytherin"}]},
+  {q:"Your friend is scared of the dark forest. You...",opts:[{text:"🦁 Take their hand and go in together!",house:"gryffindor"},{text:"🦡 Stay and tell funny stories until they feel better",house:"hufflepuff"},{text:"🦅 Explain the forest is full of amazing creatures",house:"ravenclaw"},{text:"🐍 Go ahead first to make sure it's safe",house:"slytherin"}]},
+  {q:"You discover a secret room! Inside you hope to find...",opts:[{text:"🦁 A magical sword that glows!",house:"gryffindor"},{text:"🦡 Yummy food and comfy chairs",house:"hufflepuff"},{text:"🦅 Ancient books about every spell",house:"ravenclaw"},{text:"🐍 Rare magical treasures",house:"slytherin"}]},
+  {q:"A dragon blocks the path! What's your move?",opts:[{text:"🦁 Face it with courage!",house:"gryffindor"},{text:"🦡 Offer it food — maybe it's hungry!",house:"hufflepuff"},{text:"🦅 Study it to find a safe way around",house:"ravenclaw"},{text:"🐍 Trick it while it's distracted",house:"slytherin"}]},
+  {q:"What would you most like to be remembered for?",opts:[{text:"🦁 Being the bravest wizard ever!",house:"gryffindor"},{text:"🦡 Being the kindest friend ever",house:"hufflepuff"},{text:"🦅 Being the wisest mind of all time",house:"ravenclaw"},{text:"🐍 Being the most powerful wizard in history",house:"slytherin"}]}
 ];
+let curRiddle=0;
 
-let currentRiddle = 0;
+document.getElementById('playerName').addEventListener('keydown',e=>{if(e.key==='Enter')startSorting()});
 
-function startSorting() {
-  const name = document.getElementById('playerName').value.trim();
-  if (!name) { showToast("Please enter your wizard name! 🪄"); return; }
-  STATE.playerName = name;
-  STATE.houseScores = { gryffindor: 0, hufflepuff: 0, ravenclaw: 0, slytherin: 0 };
-  currentRiddle = 0;
-  initAudio();
-  playMagicChime();
-  showScreen('sorting');
-  showRiddle();
+function startSorting(){
+  const name=document.getElementById('playerName').value.trim();
+  if(!name){showToast("Enter your wizard name! 🪄");return}
+  S.name=name; S.houseScores={gryffindor:0,hufflepuff:0,ravenclaw:0,slytherin:0}; curRiddle=0;
+  initAudio(); playMagicChime(); showScreen('sorting'); showRiddle();
 }
-
-function showRiddle() {
-  const r = sortingRiddles[currentRiddle];
-  document.getElementById('riddleCount').textContent = `Riddle ${currentRiddle + 1} of 5`;
-  document.getElementById('sortProgress').style.width = ((currentRiddle) / 5 * 100) + '%';
-
-  const card = document.getElementById('riddleCard');
-  // Shuffle options
-  const shuffled = [...r.opts].sort(() => Math.random() - 0.5);
-  card.innerHTML = `
-    <div class="riddle-question">${r.q}</div>
-    <div class="riddle-options">
-      ${shuffled.map((o, i) => `<div class="riddle-option" onclick="selectRiddle(this, '${o.house}')">${o.text}</div>`).join('')}
-    </div>
-  `;
+function showRiddle(){
+  const r=sortingRiddles[curRiddle];
+  document.getElementById('riddleCount').textContent=`Riddle ${curRiddle+1} of 5`;
+  document.getElementById('sortProgress').style.width=((curRiddle)/5*100)+'%';
+  const shuffled=[...r.opts].sort(()=>Math.random()-.5);
+  document.getElementById('riddleCard').innerHTML=`<div class="riddle-question">${r.q}</div><div class="riddle-options">${shuffled.map(o=>`<div class="riddle-option" onclick="selectRiddle(this,'${o.house}')">${o.text}</div>`).join('')}</div>`;
 }
-
-function selectRiddle(el, house) {
-  playClick();
-  document.querySelectorAll('.riddle-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-
-  STATE.houseScores[house]++;
-  currentRiddle++;
-
-  setTimeout(() => {
-    if (currentRiddle < 5) {
-      showRiddle();
-    } else {
-      document.getElementById('sortProgress').style.width = '100%';
-      revealHouse();
-    }
-  }, 600);
+function selectRiddle(el,house){
+  playClick();document.querySelectorAll('.riddle-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');
+  S.houseScores[house]++;curRiddle++;
+  setTimeout(()=>{if(curRiddle<5)showRiddle();else{document.getElementById('sortProgress').style.width='100%';revealHouse()}},600);
 }
-
-function revealHouse() {
-  const scores = STATE.houseScores;
-  const maxScore = Math.max(...Object.values(scores));
-  const topHouses = Object.keys(scores).filter(h => scores[h] === maxScore);
-  const house = topHouses[Math.floor(Math.random() * topHouses.length)];
-
-  const houseData = {
-    gryffindor: { name: 'Gryffindor', emoji: '🦁', color: '#ae0001', desc: 'Where dwell the brave at heart! Your courage and daring set you apart. Like Harry Potter himself, you face every challenge head-on!' },
-    hufflepuff: { name: 'Hufflepuff', emoji: '🦡', color: '#ecb939', desc: 'Where they are just and loyal! Your kindness and hard work make the world brighter. Like Newt Scamander, your gentle heart is your greatest strength!' },
-    ravenclaw: { name: 'Ravenclaw', emoji: '🦅', color: '#222f5b', desc: 'Where those of wit and learning will always find their kind! Your clever mind loves to solve puzzles and discover secrets!' },
-    slytherin: { name: 'Slytherin', emoji: '🐍', color: '#1a472a', desc: 'Where the cunning folk use any means to achieve their ends! Your ambition and cleverness will take you to great places!' }
-  };
-
-  const h = houseData[house];
-  STATE.house = house;
-  STATE.houseEmoji = h.emoji;
-
+function revealHouse(){
+  const sc=S.houseScores,mx=Math.max(...Object.values(sc)),top=Object.keys(sc).filter(h=>sc[h]===mx);
+  const house=top[Math.floor(Math.random()*top.length)];
+  const hd={gryffindor:{name:'Gryffindor',emoji:'🦁',color:'#ae0001',desc:'Where dwell the brave at heart! Like Harry Potter, you face every challenge head-on!'},hufflepuff:{name:'Hufflepuff',emoji:'🦡',color:'#ecb939',desc:'Where they are just and loyal! Your kindness makes the world brighter!'},ravenclaw:{name:'Ravenclaw',emoji:'🦅',color:'#222f5b',desc:'Where wit and learning find their kind! Your clever mind loves puzzles!'},slytherin:{name:'Slytherin',emoji:'🐍',color:'#1a472a',desc:'Where cunning folk use any means! Your ambition will take you far!'}};
+  const h=hd[house]; S.house=house; S.houseEmoji=h.emoji;
   playSortingReveal();
-
-  document.getElementById('houseRevealContent').innerHTML = `
-    <h2>The Sorting Hat has decided...</h2>
-    <div class="house-banner">${h.emoji}</div>
-    <div class="house-name ${house}" style="color:${h.color};">${h.name}!</div>
-    <div class="house-desc">${h.desc}</div>
-    <p style="color:#ffd700;font-size:1.1rem;margin-bottom:20px;">Welcome, ${STATE.playerName}! ✨</p>
-    <button class="btn gold" onclick="enterHub()">Enter the Great Hall 🏰</button>
-  `;
-
+  document.getElementById('houseRevealContent').innerHTML=`<h2>The Sorting Hat has decided...</h2><div class="house-banner">${h.emoji}</div><div class="house-name" style="color:${h.color}">${h.name}!</div><div class="house-desc">${h.desc}</div><p style="color:#ffd700;font-size:1.1rem;margin-bottom:20px">Welcome, ${S.name}! ✨</p><button class="btn gold" onclick="enterHub()">Enter the Great Hall 🏰</button>`;
   showScreen('house');
 }
-
-function enterHub() {
-  document.getElementById('hubPlayerName').textContent = STATE.playerName;
-  document.getElementById('hubHouseBadge').textContent = STATE.houseEmoji;
-  playMagicChime();
-  showScreen('hub');
-  updateHubDisplay();
-  updateLeaderboard();
+function enterHub(){
+  document.getElementById('hubPlayerName').textContent=S.name;
+  document.getElementById('hubHouseBadge').textContent=S.houseEmoji;
+  playMagicChime();showScreen('hub');updateHub();pushGlobalLB();fetchGlobalLB();
 }
 
 // ============================================================
-// GAME LAUNCHER
+// GAME 1: CATCH THE SNITCH (with difficulty)
 // ============================================================
-function startGame(game) {
-  playClick();
-  switch(game) {
-    case 'snitch': startSnitchGame(); break;
-    case 'potion': startPotionGame(); break;
-    case 'duel': startDuelGame(); break;
-    case 'memory': startMemoryGame(); break;
-    case 'trivia': startTriviaGame(); break;
-  }
+let snitchInt,snitchTimerInt,snitchCount,snitchTime,snitchStreak;
+function startSnitch(){
+  showScreen('snitch'); makeDiffSelector('snitchDiffArea');
+  snitchCount=0;snitchTime={easy:35,medium:25,hard:18}[S.difficulty];snitchStreak=0;
+  document.getElementById('snitchCaught').textContent='0';document.getElementById('snitchTimer').textContent=snitchTime;
+  document.getElementById('snitchMsg').textContent='Tap the golden snitch! Avoid the bludgers!';
+  document.getElementById('snitchStreak').textContent='';document.getElementById('snitchBackBtn').style.display='none';
+  const field=document.getElementById('snitchField');field.innerHTML='';
+  const spawnRate={easy:2000,medium:1500,hard:1000}[S.difficulty];
+  const moveSpeed={easy:800,medium:500,hard:300}[S.difficulty];
+  spawnSnitch(moveSpeed); snitchInt=setInterval(()=>spawnSnitch(moveSpeed),spawnRate);
+  snitchTimerInt=setInterval(()=>{snitchTime--;document.getElementById('snitchTimer').textContent=snitchTime;if(snitchTime<=0)endSnitch()},1000);
+  const decoyRate={easy:4000,medium:2500,hard:1500}[S.difficulty];
+  S._decoyInt=setInterval(()=>{if(snitchTime>0)spawnDecoy()},decoyRate);
 }
-
-// ============================================================
-// GAME 1: CATCH THE SNITCH
-// ============================================================
-let snitchInterval, snitchTimerInterval, snitchCount, snitchTime;
-
-function startSnitchGame() {
-  showScreen('snitch');
-  snitchCount = 0;
-  snitchTime = 30;
-  document.getElementById('snitchCaught').textContent = '0';
-  document.getElementById('snitchTimer').textContent = '30';
-  document.getElementById('snitchMsg').textContent = 'Tap the golden snitch! Avoid the bludgers! 🏐';
-  document.getElementById('snitchBackBtn').style.display = 'none';
-  const field = document.getElementById('snitchField');
-  field.innerHTML = '';
-
-  spawnSnitch();
-  snitchInterval = setInterval(spawnSnitch, 1800);
-
-  snitchTimerInterval = setInterval(() => {
-    snitchTime--;
-    document.getElementById('snitchTimer').textContent = snitchTime;
-    if (snitchTime <= 0) endSnitchGame();
-  }, 1000);
-
-  // Spawn decoys
-  setInterval(() => {
-    if (snitchTime > 0) spawnDecoy();
-  }, 3000);
-}
-
-function spawnSnitch() {
-  const field = document.getElementById('snitchField');
-  const existing = field.querySelector('.snitch');
-  if (existing) existing.remove();
-
-  const s = document.createElement('div');
-  s.className = 'snitch';
-  s.textContent = '🏅';
-  s.style.left = Math.random() * (field.offsetWidth - 50) + 'px';
-  s.style.top = Math.random() * (field.offsetHeight - 50) + 'px';
-  s.onclick = () => {
-    snitchCount++;
-    document.getElementById('snitchCaught').textContent = snitchCount;
-    playSuccess();
-    showToast(`+10 points! ✨`);
-    s.remove();
-  };
+function spawnSnitch(speed){
+  const field=document.getElementById('snitchField');
+  const ex=field.querySelector('.snitch');if(ex)ex.remove();
+  const s=document.createElement('div');s.className='snitch';s.textContent='🏅';
+  s.style.left=Math.random()*(field.offsetWidth-50)+'px';s.style.top=Math.random()*(field.offsetHeight-50)+'px';
+  s.onclick=()=>{snitchCount++;snitchStreak++;document.getElementById('snitchCaught').textContent=snitchCount;playSuccess();
+    const bonus=snitchStreak>=3?snitchStreak*2:0;
+    showToast(bonus>0?`+10 +${bonus} streak bonus! 🔥`:`+10 points! ✨`);
+    if(snitchStreak>=3)document.getElementById('snitchStreak').textContent=`🔥 ${snitchStreak}x Streak!`;
+    s.remove()};
   field.appendChild(s);
-
-  // Move snitch randomly
-  let moveCount = 0;
-  const moveIt = setInterval(() => {
-    if (!document.body.contains(s) || snitchTime <= 0) { clearInterval(moveIt); return; }
-    s.style.left = Math.random() * (field.offsetWidth - 50) + 'px';
-    s.style.top = Math.random() * (field.offsetHeight - 50) + 'px';
-    moveCount++;
-    if (moveCount > 6) { clearInterval(moveIt); s.remove(); }
-  }, 600);
+  let mv=0;const mi=setInterval(()=>{if(!document.body.contains(s)||snitchTime<=0){clearInterval(mi);return}
+    s.style.left=Math.random()*(field.offsetWidth-50)+'px';s.style.top=Math.random()*(field.offsetHeight-50)+'px';mv++;if(mv>6){clearInterval(mi);s.remove()}},speed);
 }
-
-function spawnDecoy() {
-  const field = document.getElementById('snitchField');
-  const d = document.createElement('div');
-  d.className = 'decoy';
-  d.textContent = ['🏐', '💣', '🦇'][Math.floor(Math.random() * 3)];
-  d.style.left = Math.random() * (field.offsetWidth - 40) + 'px';
-  d.style.top = Math.random() * (field.offsetHeight - 40) + 'px';
-  d.onclick = () => {
-    playFail();
-    showToast('Ouch! That was a bludger! -5 points 💥');
-    snitchCount = Math.max(0, snitchCount - 0.5);
-    d.remove();
-  };
-  field.appendChild(d);
-  setTimeout(() => d.remove(), 2500);
+function spawnDecoy(){
+  const field=document.getElementById('snitchField'),d=document.createElement('div');d.className='decoy';
+  d.textContent=['🏐','💣','🦇'][Math.floor(Math.random()*3)];
+  d.style.left=Math.random()*(field.offsetWidth-40)+'px';d.style.top=Math.random()*(field.offsetHeight-40)+'px';
+  d.onclick=()=>{playFail();snitchStreak=0;document.getElementById('snitchStreak').textContent='';showToast('Ouch! Bludger! 💥');d.remove()};
+  field.appendChild(d);setTimeout(()=>d.remove(),2500);
 }
-
-function endSnitchGame() {
-  clearInterval(snitchInterval);
-  clearInterval(snitchTimerInterval);
-  const pts = snitchCount * 10;
-  addPoints(pts);
-  document.getElementById('snitchMsg').textContent = `Time's up! You caught ${snitchCount} snitches for ${pts} House Points! 🎉`;
-  document.getElementById('snitchBackBtn').style.display = 'inline-block';
-  document.getElementById('snitchField').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:3rem;">🏆</div>';
+function endSnitch(){
+  clearInterval(snitchInt);clearInterval(snitchTimerInt);clearInterval(S._decoyInt);
+  const mult={easy:1,medium:1.5,hard:2}[S.difficulty];
+  const pts=Math.round(snitchCount*10*mult);addPoints(pts);
+  document.getElementById('snitchMsg').textContent=`Time's up! ${snitchCount} snitches = ${pts} points! 🎉`;
+  document.getElementById('snitchBackBtn').style.display='inline-block';
+  document.getElementById('snitchField').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:3rem">🏆</div>';
   playMagicChime();
 }
 
 // ============================================================
-// GAME 2: POTION BREWING
+// GAME 2: POTION BREWING (with difficulty)
 // ============================================================
-const potions = [
-  {
-    name: "Wiggenweld Potion",
-    desc: "A healing potion that can wake someone from a magical sleep!",
-    ingredients: ['🌿', '🍄', '💧', '✨'],
-    names: ['Herb', 'Mushroom', 'Water', 'Fairy Dust']
-  },
-  {
-    name: "Shrinking Solution",
-    desc: "Makes things smaller — be careful not to drink it yourself!",
-    ingredients: ['🐀', '🌸', '🧊', '🔥'],
-    names: ['Rat Tail', 'Daisy Root', 'Ice Crystal', 'Dragon Fire']
-  },
-  {
-    name: "Forgetfulness Potion",
-    desc: "Makes you forget... wait, what were we making again?",
-    ingredients: ['💧', '🌙', '🪶', '🫧'],
-    names: ['River Water', 'Moonstone', 'Feather', 'Bubbles']
-  },
-  {
-    name: "Pepperup Potion",
-    desc: "Cures colds! But watch out — steam will come out of your ears!",
-    ingredients: ['🌶️', '🍯', '🫚', '💨'],
-    names: ['Hot Pepper', 'Honey', 'Ginger Root', 'Puff Smoke']
-  }
+const potions=[
+  {name:"Wiggenweld Potion",desc:"A healing potion!",ingredients:['🌿','🍄','💧','✨'],names:['Herb','Mushroom','Water','Fairy Dust']},
+  {name:"Shrinking Solution",desc:"Makes things smaller!",ingredients:['🐀','🌸','🧊','🔥'],names:['Rat Tail','Daisy Root','Ice','Dragon Fire']},
+  {name:"Forgetfulness Potion",desc:"Makes you forget!",ingredients:['💧','🌙','🪶','🫧'],names:['River Water','Moonstone','Feather','Bubbles']},
+  {name:"Pepperup Potion",desc:"Cures colds!",ingredients:['🌶️','🍯','🫚','💨'],names:['Hot Pepper','Honey','Ginger','Smoke']},
+  {name:"Felix Felicis",desc:"Liquid luck!",ingredients:['🥚','🌺','🍋','⭐'],names:['Ashwinder Egg','Squill','Lemon','Star Dust']},
+  {name:"Polyjuice Potion",desc:"Transforms you!",ingredients:['🐛','🫒','🧪','💇'],names:['Lacewing','Knotgrass','Potion Base','Hair']}
 ];
-let currentPotion, potionStep, potionCorrect, potionTotal;
-
-function startPotionGame() {
-  showScreen('potion');
-  potionCorrect = 0;
-  potionTotal = 0;
-  nextPotion();
+let curPotion,potionStep,potionCorrect,potionTotal,potionRounds;
+function startPotion(){
+  showScreen('potion');makeDiffSelector('potionDiffArea');
+  potionCorrect=0;potionTotal=0;potionRounds={easy:2,medium:3,hard:4}[S.difficulty];nextPotion();
 }
-
-function nextPotion() {
-  if (potionTotal >= 3) {
-    endPotionGame();
-    return;
-  }
-  currentPotion = potions[potionTotal % potions.length];
-  potionStep = 0;
-  document.getElementById('potionBackBtn').style.display = 'none';
-  document.getElementById('potionMsg').textContent = 'Add ingredients in the right order!';
-  document.getElementById('cauldronEmoji').textContent = '🫕';
-
-  document.getElementById('potionRecipe').innerHTML = `
-    <strong>${currentPotion.name}</strong><br>
-    <em>${currentPotion.desc}</em><br><br>
-    Add in order: ${currentPotion.names.join(' → ')}
-  `;
-
-  // Progress dots
-  const prog = document.getElementById('potionProgress');
-  prog.innerHTML = currentPotion.ingredients.map((_, i) => `<div class="potion-step" id="pstep${i}">?</div>`).join('');
-
-  // Shuffled ingredients
-  const shelf = document.getElementById('ingredientShelf');
-  const shuffled = [...currentPotion.ingredients].sort(() => Math.random() - 0.5);
-  // Add some distractors
-  const extras = ['🦎', '🕷️', '🪱', '🍀', '💎', '🧅'];
-  const allIngredients = [...shuffled, extras[Math.floor(Math.random()*extras.length)], extras[Math.floor(Math.random()*extras.length)]].sort(() => Math.random() - 0.5);
-
-  shelf.innerHTML = allIngredients.map(ing =>
-    `<div class="ingredient" onclick="addIngredient(this, '${ing}')">${ing}</div>`
-  ).join('');
+function nextPotion(){
+  if(potionTotal>=potionRounds){endPotion();return}
+  curPotion=potions[(potionTotal+Math.floor(Math.random()*potions.length))%potions.length];potionStep=0;
+  document.getElementById('potionBackBtn').style.display='none';document.getElementById('potionMsg').textContent='Add ingredients in order!';
+  document.getElementById('cauldronEmoji').textContent='🫕';
+  document.getElementById('potionRecipe').innerHTML=`<strong>${curPotion.name}</strong><br><em>${curPotion.desc}</em><br><br>Order: ${curPotion.names.join(' → ')}`;
+  document.getElementById('potionProgress').innerHTML=curPotion.ingredients.map((_,i)=>`<div class="potion-step" id="pstep${i}">?</div>`).join('');
+  const extras=['🦎','🕷️','🪱','🍀','💎','🧅'];
+  const numExtras={easy:1,medium:2,hard:3}[S.difficulty];
+  const all=[...curPotion.ingredients,...extras.slice(0,numExtras)].sort(()=>Math.random()-.5);
+  document.getElementById('ingredientShelf').innerHTML=all.map(ing=>`<div class="ingredient" onclick="addIngredient(this,'${ing}')">${ing}</div>`).join('');
 }
-
-function addIngredient(el, ing) {
-  if (potionStep >= currentPotion.ingredients.length) return;
-  playClick();
-
-  const expected = currentPotion.ingredients[potionStep];
-  const stepEl = document.getElementById('pstep' + potionStep);
-
-  if (ing === expected) {
-    stepEl.textContent = ing;
-    stepEl.classList.add('done');
-    el.classList.add('used');
-    potionStep++;
-    playSuccess();
-
-    if (potionStep >= currentPotion.ingredients.length) {
-      potionCorrect++;
-      potionTotal++;
-      document.getElementById('potionScore').textContent = potionCorrect * 30;
-      document.getElementById('cauldronEmoji').textContent = '✅';
-      document.getElementById('potionMsg').textContent = `Perfect brew! ${currentPotion.name} complete! 🎉`;
-      showToast(`+30 points! Great potion! 🧪`);
-      setTimeout(nextPotion, 2000);
-    }
-  } else {
-    stepEl.classList.add('wrong');
-    stepEl.textContent = '❌';
-    playFail();
-    potionTotal++;
-    document.getElementById('cauldronEmoji').textContent = '💥';
-    document.getElementById('potionMsg').textContent = `Oh no! Wrong ingredient! The cauldron exploded! 💥`;
-    setTimeout(nextPotion, 2000);
-  }
+function addIngredient(el,ing){
+  if(potionStep>=curPotion.ingredients.length)return;playClick();
+  const exp=curPotion.ingredients[potionStep],stepEl=document.getElementById('pstep'+potionStep);
+  if(ing===exp){stepEl.textContent=ing;stepEl.classList.add('done');el.classList.add('used');potionStep++;playSuccess();
+    if(potionStep>=curPotion.ingredients.length){potionCorrect++;potionTotal++;document.getElementById('potionScore').textContent=potionCorrect*30;
+      document.getElementById('cauldronEmoji').textContent='✅';document.getElementById('potionMsg').textContent=`${curPotion.name} complete! 🎉`;setTimeout(nextPotion,2000)}
+  }else{stepEl.classList.add('wrong');stepEl.textContent='❌';playFail();potionTotal++;
+    document.getElementById('cauldronEmoji').textContent='💥';document.getElementById('potionMsg').textContent='Wrong ingredient! Cauldron exploded! 💥';setTimeout(nextPotion,2000)}
 }
-
-function endPotionGame() {
-  const pts = potionCorrect * 30;
-  addPoints(pts);
-  document.getElementById('potionMsg').textContent = `Potion class over! You brewed ${potionCorrect}/3 potions for ${pts} points! 🧪`;
-  document.getElementById('potionBackBtn').style.display = 'inline-block';
-  document.getElementById('ingredientShelf').innerHTML = '';
-  document.getElementById('potionProgress').innerHTML = '';
-  document.getElementById('cauldronEmoji').textContent = '🏆';
-  playMagicChime();
+function endPotion(){
+  const mult={easy:1,medium:1.5,hard:2}[S.difficulty];const pts=Math.round(potionCorrect*30*mult);addPoints(pts);
+  document.getElementById('potionMsg').textContent=`Done! ${potionCorrect}/${potionRounds} potions = ${pts} points! 🧪`;
+  document.getElementById('potionBackBtn').style.display='inline-block';document.getElementById('ingredientShelf').innerHTML='';
+  document.getElementById('potionProgress').innerHTML='';document.getElementById('cauldronEmoji').textContent='🏆';playMagicChime();
 }
 
 // ============================================================
 // GAME 3: SPELL DUEL
 // ============================================================
-const spellDuels = [
-  { prompt: "Cast LUMOS to create light!", correct: "Lumos! 💡", wrong: ["Nox!", "Accio!", "Stupefy!"] },
-  { prompt: "Block the curse! Use PROTEGO!", correct: "Protego! 🛡️", wrong: ["Expelliarmus!", "Reducto!", "Incendio!"] },
-  { prompt: "Disarm the enemy! Cast EXPELLIARMUS!", correct: "Expelliarmus! ⚡", wrong: ["Lumos!", "Protego!", "Wingardium!"] },
-  { prompt: "Make the feather fly! WINGARDIUM LEVIOSA!", correct: "Wingardium Leviosa! 🪶", wrong: ["Alohomora!", "Lumos!", "Accio!"] },
-  { prompt: "Summon your Patronus! EXPECTO PATRONUM!", correct: "Expecto Patronum! 🦌", wrong: ["Stupefy!", "Protego!", "Lumos!"] },
+const spellDuels=[
+  {prompt:"Cast LUMOS to create light!",correct:"Lumos! 💡",wrong:["Nox!","Accio!","Stupefy!"]},
+  {prompt:"Block the curse! Use PROTEGO!",correct:"Protego! 🛡️",wrong:["Expelliarmus!","Reducto!","Incendio!"]},
+  {prompt:"Disarm them! EXPELLIARMUS!",correct:"Expelliarmus! ⚡",wrong:["Lumos!","Protego!","Wingardium!"]},
+  {prompt:"Make it fly! WINGARDIUM LEVIOSA!",correct:"Wingardium Leviosa! 🪶",wrong:["Alohomora!","Lumos!","Accio!"]},
+  {prompt:"Summon your Patronus!",correct:"Expecto Patronum! 🦌",wrong:["Stupefy!","Protego!","Lumos!"]},
+  {prompt:"Unlock the door! ALOHOMORA!",correct:"Alohomora! 🔓",wrong:["Lumos!","Accio!","Reducto!"]},
+  {prompt:"Summon it here! ACCIO!",correct:"Accio! 🧲",wrong:["Lumos!","Stupefy!","Protego!"]},
 ];
-const enemies = [
-  { name: "Dark Wizard", emoji: "🧙‍♂️" },
-  { name: "Troll", emoji: "👹" },
-  { name: "Dementor", emoji: "👻" },
-  { name: "Basilisk", emoji: "🐍" },
-  { name: "Death Eater", emoji: "💀" }
+const enemies=[{name:"Dark Wizard",emoji:"🧙‍♂️"},{name:"Troll",emoji:"👹"},{name:"Dementor",emoji:"👻"},{name:"Basilisk",emoji:"🐍"},{name:"Death Eater",emoji:"💀"},{name:"Werewolf",emoji:"🐺"},{name:"Grindelwald",emoji:"🧙"}];
+let duelRound,duelPHP,duelEHP,duelScore;
+function startDuel(){
+  showScreen('duel');duelRound=0;duelPHP=100;duelEHP=100;duelScore=0;
+  document.getElementById('duelBackBtn').style.display='none';nextDuel();
+}
+function nextDuel(){
+  if(duelRound>=5||duelPHP<=0||duelEHP<=0){endDuel();return}
+  const en=enemies[duelRound%enemies.length],sp=spellDuels[duelRound%spellDuels.length];
+  document.getElementById('duelRound').textContent=duelRound+1;document.getElementById('duelOpponent').textContent=en.emoji;
+  document.getElementById('enemyName').textContent=en.name;document.getElementById('spellPrompt').textContent=sp.prompt;
+  document.getElementById('duelMsg').textContent='';document.getElementById('playerHP').style.width=duelPHP+'%';document.getElementById('enemyHP').style.width=duelEHP+'%';
+  const all=[sp.correct,...sp.wrong].sort(()=>Math.random()-.5);
+  document.getElementById('spellButtons').innerHTML=all.map(s=>`<div class="spell-btn" onclick="castSpell(this,${s===sp.correct})">${s}</div>`).join('');
+}
+function castSpell(el,ok){
+  document.querySelectorAll('.spell-btn').forEach(b=>b.style.pointerEvents='none');
+  if(ok){el.classList.add('correct');playSuccess();duelEHP-=25;duelScore++;document.getElementById('duelMsg').textContent='✨ Hit!';document.getElementById('enemyHP').style.width=Math.max(0,duelEHP)+'%'}
+  else{el.classList.add('wrong');playFail();duelPHP-=20;document.getElementById('duelMsg').textContent='💥 Wrong spell!';document.getElementById('playerHP').style.width=Math.max(0,duelPHP)+'%'}
+  duelRound++;setTimeout(nextDuel,1500);
+}
+function endDuel(){
+  const won=duelEHP<=0||duelPHP>0;const pts=duelScore*20+(won?20:0);addPoints(pts);
+  document.getElementById('spellPrompt').textContent=won?'🎉 Victory!':'💫 Good effort!';document.getElementById('spellButtons').innerHTML='';
+  document.getElementById('duelMsg').textContent=`${pts} House Points! ${won?'Amazing!':'Keep practicing!'}`;
+  document.getElementById('duelBackBtn').style.display='inline-block';document.getElementById('duelOpponent').textContent='🏆';playMagicChime();
+}
+
+// ============================================================
+// GAME 4: MEMORY MATCH (with difficulty)
+// ============================================================
+const memEmojis=['🦉','🐉','🧹','⚡','🏰','🪄','📚','🧙','🦅','🐍','🦁','🦡','🔮','🗝️','🧪','🎩'];
+let memCards,memFlipped,memMatched,memMoves,memLocked,memPairs;
+function startMemory(){
+  showScreen('memory');makeDiffSelector('memoryDiffArea');
+  memFlipped=[];memMatched=0;memMoves=0;memLocked=false;
+  memPairs={easy:6,medium:8,hard:10}[S.difficulty];
+  document.getElementById('memoryMoves').textContent='0';document.getElementById('memoryMsg').textContent='';document.getElementById('memoryBackBtn').style.display='none';
+  const pairs=[...memEmojis.slice(0,memPairs),...memEmojis.slice(0,memPairs)];
+  memCards=pairs.sort(()=>Math.random()-.5);
+  const cols=memPairs<=6?3:4;
+  const grid=document.getElementById('memoryGrid');grid.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  grid.innerHTML=memCards.map((e,i)=>`<div class="memory-card" onclick="flipCard(this,${i})" data-idx="${i}"><div class="front">${e}</div><div class="back">❓</div></div>`).join('');
+}
+function flipCard(el,idx){
+  if(memLocked||el.classList.contains('flipped')||el.classList.contains('matched'))return;playClick();
+  el.classList.add('flipped');memFlipped.push({el,idx});
+  if(memFlipped.length===2){memMoves++;document.getElementById('memoryMoves').textContent=memMoves;memLocked=true;
+    const[a,b]=memFlipped;
+    if(memCards[a.idx]===memCards[b.idx]){a.el.classList.add('matched');b.el.classList.add('matched');memMatched++;playSuccess();memFlipped=[];memLocked=false;if(memMatched===memPairs)endMemory()}
+    else{playFail();setTimeout(()=>{a.el.classList.remove('flipped');b.el.classList.remove('flipped');memFlipped=[];memLocked=false},800)}}
+}
+function endMemory(){
+  const mult={easy:1,medium:1.5,hard:2}[S.difficulty];const bonus=Math.max(0,100-memMoves*3);const pts=Math.round((50+bonus)*mult);addPoints(pts);
+  document.getElementById('memoryMsg').textContent=`All pairs in ${memMoves} moves! +${pts} points! 🧠✨`;
+  document.getElementById('memoryBackBtn').style.display='inline-block';playMagicChime();
+}
+
+// ============================================================
+// GAME 5: WIZARD TRIVIA (with streak bonus)
+// ============================================================
+const triviaQs=[
+  {q:"What is Harry Potter's owl called?",opts:["Hedwig","Errol","Pigwidgeon","Scabbers"],c:0},
+  {q:"What house is Harry in?",opts:["Slytherin","Ravenclaw","Gryffindor","Hufflepuff"],c:2},
+  {q:"Who is Harry's best friend?",opts:["Draco","Ron Weasley","Neville","Cedric"],c:1},
+  {q:"What sport do wizards play on brooms?",opts:["Broomball","Quidditch","Wizard Tag","Sky Racing"],c:1},
+  {q:"What platform for the Hogwarts Express?",opts:["Platform 8","Platform 10","Platform 9¾","Platform 12"],c:2},
+  {q:"Who is headmaster of Hogwarts?",opts:["Snape","Dumbledore","McGonagall","Hagrid"],c:1},
+  {q:"What is Hagrid's three-headed dog called?",opts:["Rex","Fang","Fluffy","Buckbeak"],c:2},
+  {q:"What does 'Lumos' do?",opts:["Float things","Open locks","Create light","Invisibility"],c:2},
+  {q:"What animal can Harry talk to?",opts:["Cats","Dragons","Snakes","Owls"],c:2},
+  {q:"What is a Muggle?",opts:["A spell","A creature","A non-magical person","A potion ingredient"],c:2},
+  {q:"What is Voldemort's real name?",opts:["Tom Riddle","Sirius Black","Lucius Malfoy","Peter Pettigrew"],c:0},
+  {q:"What does Hermione use to go back in time?",opts:["Portkey","Time-Turner","Vanishing Cabinet","Floo Powder"],c:1},
+  {q:"What guards Azkaban prison?",opts:["Trolls","Giants","Dementors","Dragons"],c:2},
+  {q:"What is Harry's Patronus?",opts:["Eagle","Phoenix","Stag","Wolf"],c:2},
+  {q:"Who gives Harry his first wand?",opts:["Dumbledore","Hagrid","Ollivander","McGonagall"],c:2},
 ];
-
-let duelRound, duelPlayerHP, duelEnemyHP, duelScore;
-
-function startDuelGame() {
-  showScreen('duel');
-  duelRound = 0;
-  duelPlayerHP = 100;
-  duelEnemyHP = 100;
-  duelScore = 0;
-  document.getElementById('duelBackBtn').style.display = 'none';
-  nextDuelRound();
+let triviaIdx,triviaCorrect,triviaStrk;
+function startTrivia(){
+  showScreen('trivia');triviaIdx=0;triviaCorrect=0;triviaStrk=0;
+  document.getElementById('triviaScore').textContent='0/10';document.getElementById('triviaMsg').textContent='';
+  document.getElementById('triviaStreak').textContent='';document.getElementById('triviaBackBtn').style.display='none';
+  triviaQs.sort(()=>Math.random()-.5);showTriviaQ();
 }
-
-function nextDuelRound() {
-  if (duelRound >= 5 || duelPlayerHP <= 0 || duelEnemyHP <= 0) {
-    endDuelGame();
-    return;
-  }
-  const enemy = enemies[duelRound];
-  const spell = spellDuels[duelRound];
-
-  document.getElementById('duelRound').textContent = duelRound + 1;
-  document.getElementById('duelOpponent').textContent = enemy.emoji;
-  document.getElementById('enemyName').textContent = enemy.name;
-  document.getElementById('spellPrompt').textContent = spell.prompt;
-  document.getElementById('duelMsg').textContent = '';
-  document.getElementById('playerHP').style.width = duelPlayerHP + '%';
-  document.getElementById('enemyHP').style.width = duelEnemyHP + '%';
-
-  const allSpells = [spell.correct, ...spell.wrong].sort(() => Math.random() - 0.5);
-  document.getElementById('spellButtons').innerHTML = allSpells.map(s =>
-    `<div class="spell-btn" onclick="castSpell(this, '${s.replace("'", "\\'")}', ${s === spell.correct})">${s}</div>`
-  ).join('');
+function showTriviaQ(){
+  if(triviaIdx>=10){endTrivia();return}
+  const t=triviaQs[triviaIdx%triviaQs.length];
+  document.getElementById('triviaProgress').style.width=(triviaIdx/10*100)+'%';document.getElementById('triviaMsg').textContent='';
+  document.getElementById('triviaCard').innerHTML=`<div class="trivia-q">Q${triviaIdx+1}: ${t.q}</div><div class="trivia-options">${t.opts.map((o,i)=>`<div class="trivia-opt" onclick="ansTrivia(this,${i},${t.c})">${o}</div>`).join('')}</div>`;
 }
-
-function castSpell(el, spell, isCorrect) {
-  document.querySelectorAll('.spell-btn').forEach(b => b.style.pointerEvents = 'none');
-
-  if (isCorrect) {
-    el.classList.add('correct');
-    playSuccess();
-    duelEnemyHP -= 25;
-    duelScore++;
-    document.getElementById('duelMsg').textContent = '✨ Perfect spell! The enemy is hit!';
-    document.getElementById('enemyHP').style.width = Math.max(0, duelEnemyHP) + '%';
-  } else {
-    el.classList.add('wrong');
-    playFail();
-    duelPlayerHP -= 20;
-    document.getElementById('duelMsg').textContent = '💥 Wrong spell! The enemy strikes back!';
-    document.getElementById('playerHP').style.width = Math.max(0, duelPlayerHP) + '%';
-  }
-
-  duelRound++;
-  setTimeout(nextDuelRound, 1500);
+function ansTrivia(el,ch,cor){
+  document.querySelectorAll('.trivia-opt').forEach(o=>o.style.pointerEvents='none');
+  if(ch===cor){el.classList.add('correct');triviaCorrect++;triviaStrk++;playSuccess();
+    const bonus=triviaStrk>=3?triviaStrk*3:0;
+    document.getElementById('triviaMsg').textContent=bonus>0?`✨ Correct! +${bonus} streak bonus!`:'✨ Correct!';
+    if(triviaStrk>=3)document.getElementById('triviaStreak').textContent=`🔥 ${triviaStrk}x Streak!`;
+  }else{el.classList.add('wrong');document.querySelectorAll('.trivia-opt')[cor].classList.add('correct');playFail();triviaStrk=0;
+    document.getElementById('triviaStreak').textContent='';
+    document.getElementById('triviaMsg').textContent=`Answer: ${triviaQs[triviaIdx%triviaQs.length].opts[cor]}`}
+  document.getElementById('triviaScore').textContent=`${triviaCorrect}/10`;triviaIdx++;setTimeout(showTriviaQ,1800);
 }
-
-function endDuelGame() {
-  const won = duelEnemyHP <= 0 || duelPlayerHP > 0;
-  const pts = duelScore * 20 + (won ? 20 : 0);
-  addPoints(pts);
-  document.getElementById('spellPrompt').textContent = won ? '🎉 Victory!' : '💫 Good effort!';
-  document.getElementById('spellButtons').innerHTML = '';
-  document.getElementById('duelMsg').textContent = `You scored ${pts} House Points! ${won ? 'Amazing dueling!' : 'Keep practicing!'}`;
-  document.getElementById('duelBackBtn').style.display = 'inline-block';
-  document.getElementById('duelOpponent').textContent = '🏆';
-  playMagicChime();
+function endTrivia(){
+  const pts=triviaCorrect*15;addPoints(pts);document.getElementById('triviaProgress').style.width='100%';
+  document.getElementById('triviaCard').innerHTML=`<div style="font-size:60px;margin:20px 0">🏆</div><h3>Quiz Complete!</h3><p style="font-size:1.2rem;margin:10px 0">${triviaCorrect}/10 correct — ${pts} points!</p>`;
+  document.getElementById('triviaBackBtn').style.display='inline-block';playMagicChime();
 }
 
 // ============================================================
-// GAME 4: MEMORY MATCH
+// GAME 6: BROOMSTICK RUNNER (endless runner)
 // ============================================================
-const memoryEmojis = ['🦉', '🐉', '🧹', '⚡', '🏰', '🪄', '📚', '🧙'];
-let memoryCards, memoryFlipped, memoryMatched, memoryMoveCount, memoryLocked;
-
-function startMemoryGame() {
-  showScreen('memory');
-  memoryFlipped = [];
-  memoryMatched = 0;
-  memoryMoveCount = 0;
-  memoryLocked = false;
-  document.getElementById('memoryMoves').textContent = '0';
-  document.getElementById('memoryMsg').textContent = '';
-  document.getElementById('memoryBackBtn').style.display = 'none';
-
-  // Create pairs
-  const pairs = [...memoryEmojis.slice(0, 8), ...memoryEmojis.slice(0, 8)];
-  memoryCards = pairs.sort(() => Math.random() - 0.5);
-
-  const grid = document.getElementById('memoryGrid');
-  grid.innerHTML = memoryCards.map((emoji, i) => `
-    <div class="memory-card" onclick="flipCard(this, ${i})" data-idx="${i}">
-      <div class="front">${emoji}</div>
-      <div class="back">❓</div>
-    </div>
-  `).join('');
+let runnerAF,runnerActive,runnerPts,runnerSpeed,runnerJumping,runnerY;
+function startRunner(){
+  showScreen('runner');runnerActive=true;runnerPts=0;runnerSpeed=3;runnerJumping=false;runnerY=30;
+  document.getElementById('runnerScore').textContent='0';document.getElementById('runnerMsg').textContent='Tap or SPACE to jump!';
+  document.getElementById('runnerBackBtn').style.display='none';document.getElementById('runnerCombo').textContent='';
+  const canvas=document.getElementById('runnerCanvas');
+  canvas.querySelectorAll('.runner-obstacle,.runner-coin').forEach(e=>e.remove());
+  const player=document.getElementById('runnerPlayer');player.style.bottom='30px';
+  // Controls
+  const jumpHandler=(e)=>{if((e.code==='Space'||e.type==='touchstart'||e.type==='click')&&runnerActive)jump()};
+  canvas.onclick=jumpHandler;document.onkeydown=jumpHandler;canvas.ontouchstart=jumpHandler;
+  S._runnerObstInt=setInterval(()=>{if(runnerActive)spawnRunnerObs()},{easy:2200,medium:1600,hard:1100}[S.difficulty]||1600);
+  S._runnerCoinInt=setInterval(()=>{if(runnerActive)spawnRunnerCoin()},2000);
+  runnerLoop();
 }
-
-function flipCard(el, idx) {
-  if (memoryLocked || el.classList.contains('flipped') || el.classList.contains('matched')) return;
-  playClick();
-  el.classList.add('flipped');
-  memoryFlipped.push({ el, idx });
-
-  if (memoryFlipped.length === 2) {
-    memoryMoveCount++;
-    document.getElementById('memoryMoves').textContent = memoryMoveCount;
-    memoryLocked = true;
-
-    const [a, b] = memoryFlipped;
-    if (memoryCards[a.idx] === memoryCards[b.idx]) {
-      a.el.classList.add('matched');
-      b.el.classList.add('matched');
-      memoryMatched++;
-      playSuccess();
-      memoryFlipped = [];
-      memoryLocked = false;
-
-      if (memoryMatched === 8) endMemoryGame();
-    } else {
-      playFail();
-      setTimeout(() => {
-        a.el.classList.remove('flipped');
-        b.el.classList.remove('flipped');
-        memoryFlipped = [];
-        memoryLocked = false;
-      }, 800);
-    }
-  }
+function jump(){
+  if(runnerJumping)return;runnerJumping=true;playClick();
+  const p=document.getElementById('runnerPlayer');let vy=12,y=30;
+  const jmp=setInterval(()=>{y+=vy;vy-=1.2;p.style.bottom=y+'px';runnerY=y;
+    if(y<=30){y=30;p.style.bottom='30px';runnerY=30;runnerJumping=false;clearInterval(jmp)}},30);
 }
-
-function endMemoryGame() {
-  const bonus = Math.max(0, 100 - memoryMoveCount * 3);
-  const pts = 50 + bonus;
-  addPoints(pts);
-  document.getElementById('memoryMsg').textContent = `All pairs found in ${memoryMoveCount} moves! +${pts} points! 🧠✨`;
-  document.getElementById('memoryBackBtn').style.display = 'inline-block';
-  playMagicChime();
+function spawnRunnerObs(){
+  const canvas=document.getElementById('runnerCanvas'),obs=document.createElement('div');
+  obs.className='runner-obstacle';obs.textContent=['🏐','💣','🌳','🪨'][Math.floor(Math.random()*4)];
+  obs.style.right='-40px';obs.style.bottom='30px';canvas.appendChild(obs);
+  const mv=setInterval(()=>{if(!runnerActive){clearInterval(mv);obs.remove();return}
+    let x=parseInt(obs.style.right)||0;x+=runnerSpeed;obs.style.right=x+'px';
+    // Collision — use canvas-relative player position for screen-size independence
+    const cw=canvas.offsetWidth;const playerLeft=60;const obsRight=cw-x;
+    if(Math.abs(obsRight-playerLeft)<45&&runnerY<65){runnerActive=false;clearInterval(mv);playFail();endRunner();return}
+    if(x>cw+50){clearInterval(mv);obs.remove()}
+  },20);
+}
+function spawnRunnerCoin(){
+  const canvas=document.getElementById('runnerCanvas'),coin=document.createElement('div');
+  coin.className='runner-coin';coin.textContent='⭐';
+  coin.style.right='-30px';coin.style.bottom=(60+Math.random()*80)+'px';canvas.appendChild(coin);
+  const mv=setInterval(()=>{if(!runnerActive){clearInterval(mv);coin.remove();return}
+    let x=parseInt(coin.style.right)||0;x+=runnerSpeed;coin.style.right=x+'px';
+    const cy=parseInt(coin.style.bottom);
+    const cw=canvas.offsetWidth;const playerLeft=60;const coinRight=cw-x;
+    if(Math.abs(coinRight-playerLeft)<45&&Math.abs(runnerY-cy)<50){clearInterval(mv);coin.remove();runnerPts+=5;
+      document.getElementById('runnerScore').textContent=runnerPts;playSuccess();showToast('+5 ⭐');return}
+    if(x>cw+50){clearInterval(mv);coin.remove()}
+  },20);
+}
+function runnerLoop(){
+  if(!runnerActive)return;
+  runnerPts++;runnerSpeed=3+Math.floor(runnerPts/200)*.5;
+  document.getElementById('runnerScore').textContent=runnerPts;
+  S._runnerAF=requestAnimationFrame(()=>setTimeout(runnerLoop,50));
+}
+function endRunner(){
+  clearInterval(S._runnerObstInt);clearInterval(S._runnerCoinInt);cancelAnimationFrame(S._runnerAF);
+  const pts=Math.round(runnerPts/5);addPoints(pts);
+  document.getElementById('runnerMsg').textContent=`Crashed! Distance: ${runnerPts} = ${pts} House Points! 🧹`;
+  document.getElementById('runnerBackBtn').style.display='inline-block';playMagicChime();
 }
 
 // ============================================================
-// GAME 5: WIZARD TRIVIA
+// GAME 7: SPELL SCRAMBLE (word unscramble with timer)
 // ============================================================
-const triviaQuestions = [
-  { q: "What is the name of Harry Potter's owl?", opts: ["Hedwig", "Errol", "Pigwidgeon", "Scabbers"], correct: 0 },
-  { q: "What house does Harry Potter belong to?", opts: ["Slytherin", "Ravenclaw", "Gryffindor", "Hufflepuff"], correct: 2 },
-  { q: "Who is Harry Potter's best friend?", opts: ["Draco Malfoy", "Ron Weasley", "Neville Longbottom", "Cedric Diggory"], correct: 1 },
-  { q: "What sport do wizards play on broomsticks?", opts: ["Broomball", "Quidditch", "Wizard Tag", "Sky Racing"], correct: 1 },
-  { q: "What platform do you use to catch the Hogwarts Express?", opts: ["Platform 8", "Platform 10", "Platform 9¾", "Platform 12"], correct: 2 },
-  { q: "Who is the headmaster of Hogwarts?", opts: ["Snape", "Dumbledore", "McGonagall", "Hagrid"], correct: 1 },
-  { q: "What is the name of Hagrid's three-headed dog?", opts: ["Rex", "Fang", "Fluffy", "Buckbeak"], correct: 2 },
-  { q: "What does the spell 'Lumos' do?", opts: ["Makes things float", "Opens locks", "Creates light", "Makes you invisible"], correct: 2 },
-  { q: "What animal can Harry talk to?", opts: ["Cats", "Dragons", "Snakes", "Owls"], correct: 2 },
-  { q: "What is a Muggle?", opts: ["A type of spell", "A magical creature", "A non-magical person", "A potion ingredient"], correct: 2 },
+const spellWords=[
+  {word:"LUMOS",hint:"Creates light"},
+  {word:"ACCIO",hint:"Summons objects"},
+  {word:"REPARO",hint:"Fixes things"},
+  {word:"STUPEFY",hint:"Stuns enemies"},
+  {word:"PROTEGO",hint:"Shield charm"},
+  {word:"EXPELLIARMUS",hint:"Disarming spell"},
+  {word:"ALOHOMORA",hint:"Unlocks doors"},
+  {word:"OBLIVIATE",hint:"Erases memory"},
+  {word:"PATRONUM",hint:"Defeats dementors"},
+  {word:"REDUCTO",hint:"Blasts things apart"},
+  {word:"INCENDIO",hint:"Creates fire"},
+  {word:"LEVIOSA",hint:"Makes things float"},
 ];
-
-let triviaIdx, triviaCorrect;
-
-function startTriviaGame() {
-  showScreen('trivia');
-  triviaIdx = 0;
-  triviaCorrect = 0;
-  document.getElementById('triviaScore').textContent = '0/10';
-  document.getElementById('triviaMsg').textContent = '';
-  document.getElementById('triviaBackBtn').style.display = 'none';
-  // Shuffle
-  triviaQuestions.sort(() => Math.random() - 0.5);
-  showTriviaQ();
+let scrambleIdx,scrambleCorrect,scrambleWord,scrambleTimer,scrambleTimerInt;
+function startScramble(){
+  showScreen('scramble');scrambleIdx=0;scrambleCorrect=0;scrambleTimer=60;
+  document.getElementById('scrambleScore').textContent='0';document.getElementById('scrambleMsg').textContent='';
+  document.getElementById('scrambleStreak').textContent='';document.getElementById('scrambleBackBtn').style.display='none';
+  S._scrambleStreak=0;
+  spellWords.sort(()=>Math.random()-.5);
+  scrambleTimerInt=setInterval(()=>{scrambleTimer--;document.getElementById('scrambleTimer').textContent=`⏱️ ${scrambleTimer}s`;if(scrambleTimer<=0)endScramble()},1000);
+  nextScramble();
 }
-
-function showTriviaQ() {
-  if (triviaIdx >= 10) { endTriviaGame(); return; }
-  const t = triviaQuestions[triviaIdx % triviaQuestions.length];
-  document.getElementById('triviaProgress').style.width = (triviaIdx / 10 * 100) + '%';
-  document.getElementById('triviaMsg').textContent = '';
-
-  document.getElementById('triviaCard').innerHTML = `
-    <div class="trivia-q">Question ${triviaIdx + 1}: ${t.q}</div>
-    <div class="trivia-options">
-      ${t.opts.map((o, i) => `<div class="trivia-opt" onclick="answerTrivia(this, ${i}, ${t.correct})">${o}</div>`).join('')}
-    </div>
-  `;
+function nextScramble(){
+  if(scrambleIdx>=8||scrambleTimer<=0){endScramble();return}
+  const sw=spellWords[scrambleIdx%spellWords.length];scrambleWord=sw.word;
+  let scrambled=sw.word.split('').sort(()=>Math.random()-.5).join('');
+  let attempts=0;while(scrambled===sw.word&&attempts<20){scrambled=sw.word.split('').sort(()=>Math.random()-.5).join('');attempts++}
+  document.getElementById('scrambleWord').textContent=scrambled;
+  document.getElementById('scrambleHint').textContent=`Hint: ${sw.hint}`;
+  document.getElementById('scrambleInput').value='';document.getElementById('scrambleInput').focus();
+  document.getElementById('scrambleMsg').textContent='';
 }
-
-function answerTrivia(el, chosen, correct) {
-  document.querySelectorAll('.trivia-opt').forEach(o => o.style.pointerEvents = 'none');
-
-  if (chosen === correct) {
-    el.classList.add('correct');
-    triviaCorrect++;
-    playSuccess();
-    document.getElementById('triviaMsg').textContent = '✨ Correct! Brilliant!';
-  } else {
-    el.classList.add('wrong');
-    document.querySelectorAll('.trivia-opt')[correct].classList.add('correct');
-    playFail();
-    document.getElementById('triviaMsg').textContent = `Not quite! The answer was: ${triviaQuestions[triviaIdx % triviaQuestions.length].opts[correct]}`;
-  }
-
-  document.getElementById('triviaScore').textContent = `${triviaCorrect}/10`;
-  triviaIdx++;
-  setTimeout(showTriviaQ, 1800);
+document.getElementById('scrambleInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkScramble()});
+function checkScramble(){
+  const guess=document.getElementById('scrambleInput').value.trim().toUpperCase();
+  if(guess===scrambleWord){scrambleCorrect++;S._scrambleStreak++;playSuccess();
+    const bonus=S._scrambleStreak>=3?S._scrambleStreak*5:0;
+    document.getElementById('scrambleMsg').textContent=bonus>0?`✨ Correct! +${bonus} streak bonus!`:'✨ Correct!';
+    if(S._scrambleStreak>=3)document.getElementById('scrambleStreak').textContent=`🔥 ${S._scrambleStreak}x Streak!`;
+    document.getElementById('scrambleScore').textContent=scrambleCorrect*20;
+  }else{playFail();S._scrambleStreak=0;document.getElementById('scrambleStreak').textContent='';
+    document.getElementById('scrambleMsg').textContent=`Not quite! It was: ${scrambleWord}`}
+  scrambleIdx++;setTimeout(nextScramble,1500);
 }
-
-function endTriviaGame() {
-  const pts = triviaCorrect * 15;
-  addPoints(pts);
-  document.getElementById('triviaProgress').style.width = '100%';
-  document.getElementById('triviaCard').innerHTML = `
-    <div style="font-size:60px;margin:20px 0;">🏆</div>
-    <h3>Quiz Complete!</h3>
-    <p style="font-size:1.2rem;margin:10px 0;">${triviaCorrect}/10 correct — ${pts} House Points!</p>
-    <p style="color:#c0a060;">${triviaCorrect >= 8 ? 'Outstanding wizard knowledge! 🌟' : triviaCorrect >= 5 ? 'Good job! Keep studying! 📚' : 'Keep learning, young wizard! 🪄'}</p>
-  `;
-  document.getElementById('triviaBackBtn').style.display = 'inline-block';
-  playMagicChime();
+function endScramble(){
+  clearInterval(scrambleTimerInt);const pts=scrambleCorrect*20;addPoints(pts);
+  document.getElementById('scrambleWord').textContent='🏆';document.getElementById('scrambleHint').textContent='';
+  document.getElementById('scrambleMsg').textContent=`${scrambleCorrect} spells unscrambled = ${pts} points!`;
+  document.getElementById('scrambleBackBtn').style.display='inline-block';
+  document.getElementById('scrambleTimer').textContent='';playMagicChime();
 }
 
 // ============================================================
 // LEADERBOARD
 // ============================================================
-function showLeaderboard() {
-  playClick();
-  showScreen('leaderboard');
-  const lb = getLeaderboard();
-  const table = document.getElementById('leaderboardTable');
-
-  if (lb.length === 0) {
-    table.innerHTML = '<div style="padding:30px;text-align:center;color:#a09070;">No wizards on the leaderboard yet! Play some games to earn points!</div>';
-    return;
-  }
-
-  table.innerHTML = `
-    <div class="lb-header">
-      <span style="width:40px;">#</span>
-      <span style="flex:1;">Wizard</span>
-      <span style="width:30px;">🏠</span>
-      <span style="width:70px;text-align:right;">Points</span>
-    </div>
-    ${lb.map((entry, i) => `
-      <div class="lb-row ${entry.name === STATE.playerName ? 'current' : ''}">
-        <span class="lb-rank">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</span>
-        <span class="lb-name">${entry.name}</span>
-        <span class="lb-house">${entry.house || '❓'}</span>
-        <span class="lb-score">${entry.score}</span>
-      </div>
-    `).join('')}
-  `;
-}
+function showLeaderboard(){playClick();showScreen('leaderboard');fetchGlobalLB().then(renderLeaderboard);renderLeaderboard()}
 
 // ============================================================
-// INITIAL FOCUS
+// INIT
 // ============================================================
-window.onload = () => {
-  document.getElementById('playerName').focus();
-};
+window.onload=()=>{document.getElementById('playerName').focus();fetchGlobalLB()};
 </script>
 </body>
 </html>
