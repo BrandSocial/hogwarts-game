@@ -1,34 +1,52 @@
 // Vercel Serverless Function — Global Leaderboard API
-// Uses Vercel KV (Upstash Redis) for persistent cross-device storage
-
-const KV_URL = process.env.KV_REST_API_URL;
-const KV_TOKEN = process.env.KV_REST_API_TOKEN;
-
+// Uses Upstash Redis (via Vercel Storage) for persistent cross-device storage
+// Supports both KV_REST_API_URL/TOKEN and REDIS_URL env var formats
+ 
+// Resolve Upstash REST API credentials from available env vars
+function getCredentials() {
+  // Option 1: Vercel KV style (KV_REST_API_URL + KV_REST_API_TOKEN)
+  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    return { url: process.env.KV_REST_API_URL, token: process.env.KV_REST_API_TOKEN };
+  }
+  // Option 2: Parse REDIS_URL (redis://default:{password}@{host}:{port})
+  // Upstash REST API lives at https://{host} with the password as Bearer token
+  if (process.env.REDIS_URL) {
+    try {
+      const parsed = new URL(process.env.REDIS_URL);
+      const host = parsed.hostname;
+      const token = parsed.password;
+      return { url: `https://${host}`, token };
+    } catch { return null; }
+  }
+  return null;
+}
+ 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Content-Type': 'application/json',
 };
-
+ 
 const LB_KEY = 'hogwarts_leaderboard';
 const MAX_ENTRIES = 100;
-
-async function kvCommand(...args) {
-  const res = await fetch(`${KV_URL}`, {
+ 
+async function kvCommand(creds, ...args) {
+  const res = await fetch(creds.url, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${KV_TOKEN}`,
+      Authorization: `Bearer ${creds.token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(args),
   });
   const data = await res.json();
+  if (data.error) throw new Error(data.error);
   return data.result;
 }
-
-async function getLeaderboard() {
-  const raw = await kvCommand('GET', LB_KEY);
+ 
+async function getLeaderboard(creds) {
+  const raw = await kvCommand(creds, 'GET', LB_KEY);
   if (!raw) return [];
   try {
     return JSON.parse(raw);
@@ -36,47 +54,51 @@ async function getLeaderboard() {
     return [];
   }
 }
-
-async function saveLeaderboard(lb) {
-  await kvCommand('SET', LB_KEY, JSON.stringify(lb));
+ 
+async function saveLeaderboard(creds, lb) {
+  await kvCommand(creds, 'SET', LB_KEY, JSON.stringify(lb));
 }
-
+ 
+function setCors(res) {
+  Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
+}
+ 
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return res.status(200).setHeader('Access-Control-Allow-Origin', '*')
-      .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-      .setHeader('Access-Control-Allow-Headers', 'Content-Type')
-      .end();
+    setCors(res);
+    return res.status(200).end();
   }
-
-  // Check KV is configured
-  if (!KV_URL || !KV_TOKEN) {
+ 
+  // Resolve credentials
+  const creds = getCredentials();
+  if (!creds) {
+    setCors(res);
     return res.status(503).json({ error: 'Leaderboard storage not configured', entries: [] });
   }
-
+ 
   try {
     if (req.method === 'GET') {
-      const lb = await getLeaderboard();
-      Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
+      const lb = await getLeaderboard(creds);
+      setCors(res);
       return res.status(200).json({ entries: lb });
     }
-
+ 
     if (req.method === 'POST') {
       const { name, score, house } = req.body || {};
-
+ 
       if (!name || typeof score !== 'number') {
-        Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
+        setCors(res);
         return res.status(400).json({ error: 'name (string) and score (number) required' });
       }
-
+ 
       // Sanitize inputs
       const cleanName = String(name).slice(0, 30).replace(/[<>"'&]/g, '');
       const cleanHouse = String(house || '').slice(0, 5);
       const cleanScore = Math.max(0, Math.min(999999, Math.round(score)));
-
-      let lb = await getLeaderboard();
-
+ 
+      let lb = await getLeaderboard(creds);
+ 
       // Find existing entry for this player
       const existing = lb.findIndex(e => e.name === cleanName);
       if (existing >= 0) {
@@ -94,21 +116,21 @@ export default async function handler(req, res) {
           lastPlayed: Date.now(),
         });
       }
-
+ 
       // Sort and trim
       lb.sort((a, b) => b.score - a.score);
       lb = lb.slice(0, MAX_ENTRIES);
-
-      await saveLeaderboard(lb);
-
-      Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
+ 
+      await saveLeaderboard(creds, lb);
+ 
+      setCors(res);
       return res.status(200).json({ success: true, entries: lb });
     }
-
-    Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
+ 
+    setCors(res);
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
-    Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
-    return res.status(500).json({ error: 'Internal server error' });
+    setCors(res);
+    return res.status(500).json({ error: 'Internal server error', detail: err.message });
   }
 }
