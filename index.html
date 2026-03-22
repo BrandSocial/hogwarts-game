@@ -287,7 +287,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     <h2>🏅 Hogwarts Leaderboard</h2>
     <div style="margin-bottom:15px">
       <span class="lb-tab active" id="tabGlobal" onclick="switchLBTab('global')">🏆 All Wizards</span>
-      <span class="lb-tab" id="tabLocal" onclick="switchLBTab('local')">⭐ My Best</span>
+      <span class="lb-tab" id="tabLocal" onclick="switchLBTab('local')">⭐ My Rank</span>
     </div>
     <div class="leaderboard" id="leaderboardTable"></div>
     <p id="lbStatus" style="color:#a09070;font-size:.8rem;margin-top:8px"></p>
@@ -306,17 +306,41 @@ const S = {
 };
 
 // ============================================================
-// LEADERBOARD (localStorage-based, persistent per device)
+// LEADERBOARD — Cloud global + localStorage fallback
 // ============================================================
 let globalLB = [];
 let lbTab = 'global';
+const LB_API = '/api/leaderboard';
 
 async function fetchGlobalLB() {
+  try {
+    const res = await fetch(LB_API);
+    const data = await res.json();
+    if (data.entries && data.entries.length > 0) {
+      globalLB = data.entries;
+      // Merge cloud data into local cache
+      localStorage.setItem('hogwartsLB', JSON.stringify(globalLB.slice(0, 100)));
+      return;
+    }
+  } catch (e) { /* API not available, use local fallback */ }
   globalLB = getLocalLB();
 }
 
 async function pushGlobalLB() {
   saveLocalLB();
+  try {
+    const res = await fetch(LB_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: S.name, score: S.pts, house: S.houseEmoji })
+    });
+    const data = await res.json();
+    if (data.entries) {
+      globalLB = data.entries;
+      localStorage.setItem('hogwartsLB', JSON.stringify(globalLB.slice(0, 100)));
+      return;
+    }
+  } catch (e) { /* API not available, use local fallback */ }
   globalLB = getLocalLB();
 }
 
@@ -326,10 +350,16 @@ function getLocalLB() {
 function saveLocalLB() {
   let lb = getLocalLB();
   const ex = lb.findIndex(e => e.name === S.name);
-  if (ex >= 0) { if (S.pts > lb[ex].score) lb[ex].score = S.pts; lb[ex].house = S.houseEmoji; }
-  else lb.push({ name: S.name, score: S.pts, house: S.houseEmoji });
+  if (ex >= 0) {
+    if (S.pts > lb[ex].score) { lb[ex].score = S.pts; }
+    lb[ex].house = S.houseEmoji;
+    lb[ex].lastPlayed = Date.now();
+  } else {
+    lb.push({ name: S.name, score: S.pts, house: S.houseEmoji, lastPlayed: Date.now() });
+  }
   lb.sort((a,b) => b.score - a.score);
-  localStorage.setItem('hogwartsLB', JSON.stringify(lb.slice(0, 30)));
+  localStorage.setItem('hogwartsLB', JSON.stringify(lb.slice(0, 100)));
+  globalLB = getLocalLB();
 }
 
 function switchLBTab(tab) {
@@ -340,23 +370,31 @@ function switchLBTab(tab) {
 }
 
 function renderLeaderboard() {
-  const lb = lbTab === 'global' ? globalLB : getLocalLB();
+  // "All Wizards" uses globalLB (cloud data), "My Rank" filters to current player
+  const allLB = globalLB.length > 0 ? globalLB : getLocalLB();
+  const lb = lbTab === 'global' ? allLB : allLB.filter(e => e.name === S.name);
   const table = document.getElementById('leaderboardTable');
   const status = document.getElementById('lbStatus');
 
   if (!lb.length) {
-    table.innerHTML = '<div style="padding:30px;text-align:center;color:#a09070">No wizards yet! Play games to earn points!</div>';
+    table.innerHTML = lbTab === 'global'
+      ? '<div style="padding:30px;text-align:center;color:#a09070">No wizards yet! Play games to earn points!</div>'
+      : '<div style="padding:30px;text-align:center;color:#a09070">Play some games to see your ranking here!</div>';
     status.textContent = '';
     return;
   }
+  const globalRanks = allLB.map(e => e.name);
   table.innerHTML = `<div class="lb-header"><span style="width:40px">#</span><span style="flex:1">Wizard</span><span style="width:30px">🏠</span><span style="width:70px;text-align:right">Points</span></div>
-    ${lb.slice(0,20).map((e,i) => `<div class="lb-row ${e.name===S.name?'current':''}">
-      <span class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span>
+    ${lb.slice(0,30).map((e,i) => {
+      const rank = lbTab === 'global' ? i : globalRanks.indexOf(e.name);
+      return `<div class="lb-row ${e.name===S.name?'current':''}">
+      <span class="lb-rank">${rank===0?'🥇':rank===1?'🥈':rank===2?'🥉':rank+1}</span>
       <span class="lb-name">${e.name}</span>
       <span class="lb-house">${e.house||'❓'}</span>
       <span class="lb-score">${e.score}</span>
-    </div>`).join('')}`;
-  status.textContent = lbTab === 'global' ? `${lb.length} wizards worldwide` : `${lb.length} local entries`;
+    </div>`;
+    }).join('')}`;
+  status.textContent = lbTab === 'global' ? `🌍 ${allLB.length} wizards worldwide` : `Your rank: #${globalRanks.indexOf(S.name)+1} of ${allLB.length} wizards`;
 }
 
 // ============================================================
@@ -884,12 +922,13 @@ function startRunner(){
   const canvas=document.getElementById('runnerCanvas');
   canvas.querySelectorAll('.runner-obstacle,.runner-coin').forEach(e=>e.remove());
   const player=document.getElementById('runnerPlayer');player.style.bottom='30px';
-  // Controls
-  const jumpHandler=(e)=>{if((e.code==='Space'||e.type==='touchstart'||e.type==='click')&&runnerActive)jump()};
-  canvas.onclick=jumpHandler;document.onkeydown=jumpHandler;canvas.ontouchstart=jumpHandler;
+  // Controls — remove old listeners before adding new ones
+  if(S._runnerJumpHandler){canvas.removeEventListener('touchstart',S._runnerJumpHandler);document.onkeydown=null;canvas.onclick=null}
+  S._runnerJumpHandler=(e)=>{if((e.code==='Space'||e.type==='touchstart'||e.type==='click')&&runnerActive){e.preventDefault();jump()}};
+  canvas.onclick=S._runnerJumpHandler;document.onkeydown=S._runnerJumpHandler;canvas.addEventListener('touchstart',S._runnerJumpHandler,{passive:false});
   S._runnerObstInt=setInterval(()=>{if(runnerActive)spawnRunnerObs()},{easy:2200,medium:1600,hard:1100}[S.difficulty]||1600);
   S._runnerCoinInt=setInterval(()=>{if(runnerActive)spawnRunnerCoin()},2000);
-  runnerLoop();
+  S._runnerLoopInt=setInterval(runnerLoop,50);
 }
 function jump(){
   if(runnerJumping)return;runnerJumping=true;playClick();
@@ -926,10 +965,10 @@ function runnerLoop(){
   if(!runnerActive)return;
   runnerPts++;runnerSpeed=3+Math.floor(runnerPts/200)*.5;
   document.getElementById('runnerScore').textContent=runnerPts;
-  S._runnerAF=requestAnimationFrame(()=>setTimeout(runnerLoop,50));
 }
 function endRunner(){
-  clearInterval(S._runnerObstInt);clearInterval(S._runnerCoinInt);cancelAnimationFrame(S._runnerAF);
+  clearInterval(S._runnerObstInt);clearInterval(S._runnerCoinInt);clearInterval(S._runnerLoopInt);
+  document.onkeydown=null;const canvas=document.getElementById('runnerCanvas');if(canvas&&S._runnerJumpHandler){canvas.onclick=null;canvas.removeEventListener('touchstart',S._runnerJumpHandler)}
   const pts=Math.round(runnerPts/5);addPoints(pts);
   document.getElementById('runnerMsg').textContent=`Crashed! Distance: ${runnerPts} = ${pts} House Points! 🧹`;
   document.getElementById('runnerBackBtn').style.display='inline-block';playMagicChime();
