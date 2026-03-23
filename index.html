@@ -152,7 +152,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
 <div class="particles" id="particles"></div>
 <div class="music-toggle" id="musicToggle" title="Toggle Music">🎵</div>
 <div class="sound-toggle" id="soundToggle" title="Toggle Sound">🔊</div>
-
+ 
 <div class="game-container">
   <div class="screen active" id="screen-welcome">
     <div class="crest">🏰</div>
@@ -162,7 +162,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     <br><br>
     <button class="btn gold" onclick="startSorting()">Begin Your Journey ✨</button>
   </div>
-
+ 
   <div class="screen" id="screen-sorting">
     <h2>🎩 The Sorting Hat Speaks...</h2>
     <p class="subtitle">Answer these riddles, and I shall reveal your true house!</p>
@@ -170,11 +170,11 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     <p id="riddleCount" style="font-size:.85rem;color:#a09070;margin-bottom:10px">Riddle 1 of 5</p>
     <div class="riddle-card" id="riddleCard"></div>
   </div>
-
+ 
   <div class="screen" id="screen-house">
     <div class="house-reveal" id="houseRevealContent"></div>
   </div>
-
+ 
   <div class="screen" id="screen-hub">
     <div class="score-bar">
       <span><span id="hubHouseBadge"></span> <span id="hubPlayerName"></span> <span class="level-badge" id="hubLevel">Lvl 1</span></span>
@@ -193,7 +193,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
       <div class="hub-card" onclick="showLeaderboard()"><div class="icon">🏅</div><div class="name">Leaderboard</div><div class="desc">Global rankings!</div></div>
     </div>
   </div>
-
+ 
   <!-- Game screens -->
   <div class="screen" id="screen-snitch">
     <div class="score-bar"><span>🏆 Catch the Snitch</span><span class="points">Caught: <span id="snitchCaught">0</span></span></div>
@@ -204,7 +204,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     <div class="streak-display" id="snitchStreak"></div>
     <br><button class="btn small" id="snitchBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
-
+ 
   <div class="screen" id="screen-potion">
     <div class="score-bar"><span>🧪 Potion Brewing</span><span class="points">Score: <span id="potionScore">0</span></span></div>
     <div id="potionDiffArea"></div>
@@ -217,7 +217,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     </div></div>
     <br><button class="btn small" id="potionBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
-
+ 
   <div class="screen" id="screen-duel">
     <div class="score-bar"><span>⚡ Spell Duel</span><span class="points">Round: <span id="duelRound">1</span>/5</span></div>
     <div class="game-area"><div class="duel-area">
@@ -233,7 +233,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     </div></div>
     <br><button class="btn small" id="duelBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
-
+ 
   <div class="screen" id="screen-memory">
     <div class="score-bar"><span>🃏 Memory Magic</span><span class="points">Moves: <span id="memoryMoves">0</span></span></div>
     <div id="memoryDiffArea"></div>
@@ -244,7 +244,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     </div>
     <br><button class="btn small" id="memoryBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
-
+ 
   <div class="screen" id="screen-trivia">
     <div class="score-bar"><span>📚 Wizard Trivia</span><span class="points">Score: <span id="triviaScore">0</span>/10</span></div>
     <div class="progress-bar"><div class="progress-fill" id="triviaProgress" style="width:0%"></div></div>
@@ -253,7 +253,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     <div class="streak-display" id="triviaStreak"></div>
     <br><button class="btn small" id="triviaBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
-
+ 
   <div class="screen" id="screen-runner">
     <div class="score-bar"><span>🧹 Broomstick Run</span><span class="points">Score: <span id="runnerScore">0</span></span></div>
     <div class="game-area" style="padding:10px">
@@ -266,7 +266,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     </div>
     <br><button class="btn small" id="runnerBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
-
+ 
   <div class="screen" id="screen-scramble">
     <div class="score-bar"><span>🔤 Spell Scramble</span><span class="points">Score: <span id="scrambleScore">0</span></span></div>
     <div class="game-area">
@@ -282,7 +282,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     </div>
     <br><button class="btn small" id="scrambleBackBtn" onclick="goHub()" style="display:none">Back to Great Hall</button>
   </div>
-
+ 
   <div class="screen" id="screen-leaderboard">
     <h2>🏅 Hogwarts Leaderboard</h2>
     <div style="margin-bottom:15px">
@@ -294,7 +294,7 @@ h3{font-family:'Cinzel',serif;font-size:1.3rem;color:#c0a060;margin-bottom:10px}
     <br><button class="btn small" onclick="goHub()">Back to Great Hall</button>
   </div>
 </div>
-
+ 
 <script>
 // ============================================================
 // STATE
@@ -304,14 +304,14 @@ const S = {
   pts:0, level:1, musicOn:false, soundOn:true, audioCtx:null, streak:0, bestStreak:0,
   difficulty:'easy' // easy, medium, hard
 };
-
+ 
 // ============================================================
 // LEADERBOARD — Cloud global + localStorage fallback
 // ============================================================
 let globalLB = [];
 let lbTab = 'global';
 const LB_API = '/api/leaderboard';
-
+ 
 async function fetchGlobalLB() {
   try {
     const res = await fetch(LB_API);
@@ -325,7 +325,7 @@ async function fetchGlobalLB() {
   } catch (e) { /* API not available, use local fallback */ }
   globalLB = getLocalLB();
 }
-
+ 
 async function pushGlobalLB() {
   saveLocalLB();
   try {
@@ -343,7 +343,7 @@ async function pushGlobalLB() {
   } catch (e) { /* API not available, use local fallback */ }
   globalLB = getLocalLB();
 }
-
+ 
 function getLocalLB() {
   try { return JSON.parse(localStorage.getItem('hogwartsLB') || '[]'); } catch { return []; }
 }
@@ -361,21 +361,21 @@ function saveLocalLB() {
   localStorage.setItem('hogwartsLB', JSON.stringify(lb.slice(0, 100)));
   globalLB = getLocalLB();
 }
-
+ 
 function switchLBTab(tab) {
   lbTab = tab;
   document.getElementById('tabGlobal').classList.toggle('active', tab === 'global');
   document.getElementById('tabLocal').classList.toggle('active', tab === 'local');
   renderLeaderboard();
 }
-
+ 
 function renderLeaderboard() {
   // "All Wizards" uses globalLB (cloud data), "My Rank" filters to current player
   const allLB = globalLB.length > 0 ? globalLB : getLocalLB();
   const lb = lbTab === 'global' ? allLB : allLB.filter(e => e.name === S.name);
   const table = document.getElementById('leaderboardTable');
   const status = document.getElementById('lbStatus');
-
+ 
   if (!lb.length) {
     table.innerHTML = lbTab === 'global'
       ? '<div style="padding:30px;text-align:center;color:#a09070">No wizards yet! Play games to earn points!</div>'
@@ -396,7 +396,7 @@ function renderLeaderboard() {
     }).join('')}`;
   status.textContent = lbTab === 'global' ? `🌍 ${allLB.length} wizards worldwide` : `Your rank: #${globalRanks.indexOf(S.name)+1} of ${allLB.length} wizards`;
 }
-
+ 
 // ============================================================
 // AUDIO ENGINE — Orchestral Fantasy via Web Audio API
 // ============================================================
@@ -415,7 +415,7 @@ function initAudio() {
     S.reverb = conv;
   }
 }
-
+ 
 function playCelesta(freq, dur=0.8, vol=0.12) {
   if (!S.soundOn) return;
   try {
@@ -430,7 +430,7 @@ function playCelesta(freq, dur=0.8, vol=0.12) {
     [o1,o2,o3].forEach(o=>{o.start(t);o.stop(t+dur)});
   } catch(e){}
 }
-
+ 
 function playHarp(freq, dur=1.2, vol=0.08) {
   if (!S.soundOn) return;
   try {
@@ -440,7 +440,7 @@ function playHarp(freq, dur=1.2, vol=0.08) {
     o.connect(g); g.connect(ctx.destination); g.connect(S.reverb); o.start(t); o.stop(t+dur);
   } catch(e){}
 }
-
+ 
 // Strings pad for richer atmosphere
 function playStrings(freq, dur=2, vol=0.04) {
   if (!S.soundOn) return;
@@ -454,7 +454,7 @@ function playStrings(freq, dur=2, vol=0.04) {
     [o1,o2].forEach(o=>{o.start(t);o.stop(t+dur)});
   } catch(e){}
 }
-
+ 
 function playNote(freq, dur=0.3, type='sine', vol=0.12) {
   if (!S.soundOn) return;
   try {
@@ -464,24 +464,24 @@ function playNote(freq, dur=0.3, type='sine', vol=0.12) {
     o.connect(g); g.connect(ctx.destination); if(S.reverb) g.connect(S.reverb); o.start(t); o.stop(t+dur);
   } catch(e){}
 }
-
+ 
 function playMagicChime(){[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>playCelesta(f,.9,.1),i*130))}
 function playSuccess(){[523,659,784].forEach((f,i)=>setTimeout(()=>playHarp(f,.8,.1),i*80));setTimeout(()=>playCelesta(1047,.6,.08),280)}
 function playFail(){playCelesta(311,.6,.08);setTimeout(()=>playCelesta(294,.6,.08),80)}
 function playClick(){playCelesta(1200,.12,.06)}
 function playSortingReveal(){const f=[262,330,392,523,659,784,1047,1319];f.forEach((n,i)=>{setTimeout(()=>playCelesta(n,1.2,.09),i*180);if(i%2===0)setTimeout(()=>playHarp(n/2,1.5,.06),i*180+50);if(i%3===0)setTimeout(()=>playStrings(n/4,2,.03),i*180)})}
-
+ 
 // ============================================================
 // BACKGROUND MUSIC — Hedwig-inspired original in E minor
 // Celesta melody + harp arpeggios + string pad
 // Waltz time (3/4) like the original theme
 // ============================================================
 let musicTimeouts=[], musicPlaying=false;
-
+ 
 function composeHedwigTheme() {
   const BPM=160; // Waltz tempo
   const beat=60000/BPM;
-
+ 
   // E minor waltz melody (celesta) — mysterious, whimsical, 3/4 time
   // E4=330, F#4=370, G4=392, A4=440, B4=494, C5=523, D5=587, E5=659, F#5=740, G5=784
   const melody = [
@@ -516,7 +516,7 @@ function composeHedwigTheme() {
     {f:392,t:beat*30,dur:.6},        // G4
     {f:330,t:beat*31,dur:2},         // E4 (final)
   ];
-
+ 
   // Harp (lower, waltz bass — beat 1 of each bar)
   const harp = [
     {f:165,t:0,dur:2},          // E3
@@ -551,7 +551,7 @@ function composeHedwigTheme() {
     {f:196,t:beat*28,dur:1.5},
     {f:165,t:beat*30,dur:3},
   ];
-
+ 
   // String pad (sustained chords, very quiet)
   const strings = [
     {f:165,t:0,dur:beat*6/1000*3},        // Em
@@ -566,10 +566,10 @@ function composeHedwigTheme() {
     {f:196,t:beat*24,dur:beat*6/1000*3},
     {f:165,t:beat*30,dur:beat*4/1000*3},   // Em final
   ];
-
+ 
   return { melody, harp, strings, totalDuration: beat * 34 };
 }
-
+ 
 function startMusic() {
   if (musicPlaying) return;
   musicPlaying = true;
@@ -584,7 +584,7 @@ function startMusic() {
   playLoop();
 }
 function stopMusic(){musicPlaying=false;musicTimeouts.forEach(id=>clearTimeout(id));musicTimeouts=[]}
-
+ 
 document.getElementById('musicToggle').onclick=()=>{
   initAudio(); if(S.audioCtx.state==='suspended')S.audioCtx.resume();
   S.musicOn=!S.musicOn;
@@ -595,7 +595,7 @@ document.getElementById('soundToggle').onclick=()=>{
   S.soundOn=!S.soundOn;
   document.getElementById('soundToggle').textContent=S.soundOn?'🔊':'🔈';
 };
-
+ 
 // ============================================================
 // STARS, PARTICLES, WAND
 // ============================================================
@@ -606,13 +606,13 @@ document.getElementById('soundToggle').onclick=()=>{
   for(let i=0;i<15;i++){const d=document.createElement('div');d.className='particle';d.style.cssText=`left:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${Math.random()*4+4}s`;p.appendChild(d)}
 })();
 document.addEventListener('mousemove',e=>{if(Math.random()>.7){const t=document.createElement('div');t.className='wand-trail';t.style.left=e.clientX+'px';t.style.top=e.clientY+'px';document.body.appendChild(t);setTimeout(()=>t.remove(),800)}});
-
+ 
 // ============================================================
 // SCREEN MGMT / POINTS
 // ============================================================
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active')}
 function showToast(msg,dur=2500){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .5s';setTimeout(()=>t.remove(),500)},dur)}
-
+ 
 function addPoints(pts){
   S.pts+=pts;
   const nl=Math.floor(S.pts/100)+1;
@@ -632,7 +632,7 @@ function startGame(g){
     case 'scramble':startScramble();break;
   }
 }
-
+ 
 // ============================================================
 // DIFFICULTY SELECTOR
 // ============================================================
@@ -650,7 +650,7 @@ function setDiff(d, containerId) {
   document.querySelectorAll(`#${containerId} .diff-btn`).forEach(b => b.classList.remove('active'));
   document.querySelector(`#${containerId} .diff-btn.${d}`).classList.add('active');
 }
-
+ 
 // ============================================================
 // SORTING CEREMONY
 // ============================================================
@@ -662,9 +662,9 @@ const sortingRiddles=[
   {q:"What would you most like to be remembered for?",opts:[{text:"🦁 Being the bravest wizard ever!",house:"gryffindor"},{text:"🦡 Being the kindest friend ever",house:"hufflepuff"},{text:"🦅 Being the wisest mind of all time",house:"ravenclaw"},{text:"🐍 Being the most powerful wizard in history",house:"slytherin"}]}
 ];
 let curRiddle=0;
-
+ 
 document.getElementById('playerName').addEventListener('keydown',e=>{if(e.key==='Enter')startSorting()});
-
+ 
 function startSorting(){
   const name=document.getElementById('playerName').value.trim();
   if(!name){showToast("Enter your wizard name! 🪄");return}
@@ -697,7 +697,7 @@ function enterHub(){
   document.getElementById('hubHouseBadge').textContent=S.houseEmoji;
   playMagicChime();showScreen('hub');updateHub();pushGlobalLB();fetchGlobalLB();
 }
-
+ 
 // ============================================================
 // GAME 1: CATCH THE SNITCH (with difficulty)
 // ============================================================
@@ -746,7 +746,7 @@ function endSnitch(){
   document.getElementById('snitchField').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:3rem">🏆</div>';
   playMagicChime();
 }
-
+ 
 // ============================================================
 // GAME 2: POTION BREWING (with difficulty)
 // ============================================================
@@ -758,12 +758,13 @@ const potions=[
   {name:"Felix Felicis",desc:"Liquid luck!",ingredients:['🥚','🌺','🍋','⭐'],names:['Ashwinder Egg','Squill','Lemon','Star Dust']},
   {name:"Polyjuice Potion",desc:"Transforms you!",ingredients:['🐛','🫒','🧪','💇'],names:['Lacewing','Knotgrass','Potion Base','Hair']}
 ];
-let curPotion,potionStep,potionCorrect,potionTotal,potionRounds;
+let curPotion,potionStep,potionCorrect,potionTotal,potionRounds,potionLocked=false;
 function startPotion(){
   showScreen('potion');makeDiffSelector('potionDiffArea');
-  potionCorrect=0;potionTotal=0;potionRounds={easy:2,medium:3,hard:4}[S.difficulty];nextPotion();
+  potionCorrect=0;potionTotal=0;potionLocked=false;potionRounds={easy:2,medium:3,hard:4}[S.difficulty];nextPotion();
 }
 function nextPotion(){
+  potionLocked=false;
   if(potionTotal>=potionRounds){endPotion();return}
   curPotion=potions[(potionTotal+Math.floor(Math.random()*potions.length))%potions.length];potionStep=0;
   document.getElementById('potionBackBtn').style.display='none';document.getElementById('potionMsg').textContent='Add ingredients in order!';
@@ -776,12 +777,12 @@ function nextPotion(){
   document.getElementById('ingredientShelf').innerHTML=all.map(ing=>`<div class="ingredient" onclick="addIngredient(this,'${ing}')">${ing}</div>`).join('');
 }
 function addIngredient(el,ing){
-  if(potionStep>=curPotion.ingredients.length)return;playClick();
+  if(potionLocked||potionStep>=curPotion.ingredients.length)return;playClick();
   const exp=curPotion.ingredients[potionStep],stepEl=document.getElementById('pstep'+potionStep);
   if(ing===exp){stepEl.textContent=ing;stepEl.classList.add('done');el.classList.add('used');potionStep++;playSuccess();
-    if(potionStep>=curPotion.ingredients.length){potionCorrect++;potionTotal++;document.getElementById('potionScore').textContent=potionCorrect*30;
+    if(potionStep>=curPotion.ingredients.length){potionLocked=true;potionCorrect++;potionTotal++;document.getElementById('potionScore').textContent=potionCorrect*30;
       document.getElementById('cauldronEmoji').textContent='✅';document.getElementById('potionMsg').textContent=`${curPotion.name} complete! 🎉`;setTimeout(nextPotion,2000)}
-  }else{stepEl.classList.add('wrong');stepEl.textContent='❌';playFail();potionTotal++;
+  }else{potionLocked=true;stepEl.classList.add('wrong');stepEl.textContent='❌';playFail();potionTotal++;
     document.getElementById('cauldronEmoji').textContent='💥';document.getElementById('potionMsg').textContent='Wrong ingredient! Cauldron exploded! 💥';setTimeout(nextPotion,2000)}
 }
 function endPotion(){
@@ -790,7 +791,7 @@ function endPotion(){
   document.getElementById('potionBackBtn').style.display='inline-block';document.getElementById('ingredientShelf').innerHTML='';
   document.getElementById('potionProgress').innerHTML='';document.getElementById('cauldronEmoji').textContent='🏆';playMagicChime();
 }
-
+ 
 // ============================================================
 // GAME 3: SPELL DUEL
 // ============================================================
@@ -830,7 +831,7 @@ function endDuel(){
   document.getElementById('duelMsg').textContent=`${pts} House Points! ${won?'Amazing!':'Keep practicing!'}`;
   document.getElementById('duelBackBtn').style.display='inline-block';document.getElementById('duelOpponent').textContent='🏆';playMagicChime();
 }
-
+ 
 // ============================================================
 // GAME 4: MEMORY MATCH (with difficulty)
 // ============================================================
@@ -860,7 +861,7 @@ function endMemory(){
   document.getElementById('memoryMsg').textContent=`All pairs in ${memMoves} moves! +${pts} points! 🧠✨`;
   document.getElementById('memoryBackBtn').style.display='inline-block';playMagicChime();
 }
-
+ 
 // ============================================================
 // GAME 5: WIZARD TRIVIA (with streak bonus)
 // ============================================================
@@ -910,7 +911,7 @@ function endTrivia(){
   document.getElementById('triviaCard').innerHTML=`<div style="font-size:60px;margin:20px 0">🏆</div><h3>Quiz Complete!</h3><p style="font-size:1.2rem;margin:10px 0">${triviaCorrect}/10 correct — ${pts} points!</p>`;
   document.getElementById('triviaBackBtn').style.display='inline-block';playMagicChime();
 }
-
+ 
 // ============================================================
 // GAME 6: BROOMSTICK RUNNER (endless runner)
 // ============================================================
@@ -967,13 +968,14 @@ function runnerLoop(){
   document.getElementById('runnerScore').textContent=runnerPts;
 }
 function endRunner(){
+  if(!runnerActive)return;runnerActive=false;
   clearInterval(S._runnerObstInt);clearInterval(S._runnerCoinInt);clearInterval(S._runnerLoopInt);
   document.onkeydown=null;const canvas=document.getElementById('runnerCanvas');if(canvas&&S._runnerJumpHandler){canvas.onclick=null;canvas.removeEventListener('touchstart',S._runnerJumpHandler)}
   const pts=Math.round(runnerPts/5);addPoints(pts);
   document.getElementById('runnerMsg').textContent=`Crashed! Distance: ${runnerPts} = ${pts} House Points! 🧹`;
   document.getElementById('runnerBackBtn').style.display='inline-block';playMagicChime();
 }
-
+ 
 // ============================================================
 // GAME 7: SPELL SCRAMBLE (word unscramble with timer)
 // ============================================================
@@ -991,9 +993,9 @@ const spellWords=[
   {word:"INCENDIO",hint:"Creates fire"},
   {word:"LEVIOSA",hint:"Makes things float"},
 ];
-let scrambleIdx,scrambleCorrect,scrambleWord,scrambleTimer,scrambleTimerInt;
+let scrambleIdx,scrambleCorrect,scrambleWord,scrambleTimer,scrambleTimerInt,scrambleLocked=false;
 function startScramble(){
-  showScreen('scramble');scrambleIdx=0;scrambleCorrect=0;scrambleTimer=60;
+  showScreen('scramble');scrambleIdx=0;scrambleCorrect=0;scrambleTimer=60;scrambleLocked=false;
   document.getElementById('scrambleScore').textContent='0';document.getElementById('scrambleMsg').textContent='';
   document.getElementById('scrambleStreak').textContent='';document.getElementById('scrambleBackBtn').style.display='none';
   S._scrambleStreak=0;
@@ -1002,6 +1004,7 @@ function startScramble(){
   nextScramble();
 }
 function nextScramble(){
+  scrambleLocked=false;
   if(scrambleIdx>=8||scrambleTimer<=0){endScramble();return}
   const sw=spellWords[scrambleIdx%spellWords.length];scrambleWord=sw.word;
   let scrambled=sw.word.split('').sort(()=>Math.random()-.5).join('');
@@ -1013,6 +1016,7 @@ function nextScramble(){
 }
 document.getElementById('scrambleInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkScramble()});
 function checkScramble(){
+  if(scrambleLocked)return;scrambleLocked=true;
   const guess=document.getElementById('scrambleInput').value.trim().toUpperCase();
   if(guess===scrambleWord){scrambleCorrect++;S._scrambleStreak++;playSuccess();
     const bonus=S._scrambleStreak>=3?S._scrambleStreak*5:0;
@@ -1030,12 +1034,12 @@ function endScramble(){
   document.getElementById('scrambleBackBtn').style.display='inline-block';
   document.getElementById('scrambleTimer').textContent='';playMagicChime();
 }
-
+ 
 // ============================================================
 // LEADERBOARD
 // ============================================================
 function showLeaderboard(){playClick();showScreen('leaderboard');fetchGlobalLB().then(renderLeaderboard);renderLeaderboard()}
-
+ 
 // ============================================================
 // INIT
 // ============================================================
